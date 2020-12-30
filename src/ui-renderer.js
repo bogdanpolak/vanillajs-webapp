@@ -127,18 +127,45 @@ function ComponentBuilder() {
 			input2.setAttribute("min",item.rangemin);
 			input2.setAttribute("max",item.rangemax);
 			input2.setAttribute("step",item.step);
+			const span = _nn("span","range2-display","[20, 65)");
 			const div = _nn("div","doublerange",[
 				input1,
 				input2,
-				_nn("p","",[
-					"Range: [",
-					_nn("span","range2-display-min","20")," ",
-					_nn("span","range2-display-max","65"),"]"
-				])	
+				_nn("p","",["Range:",span])	
 			]);
 			_updateId(div,item);
 			_updateWidth(div,item);
 			_updateHeight(div,item);
+			updateRangeCaption = (value1,value2) => {
+				((value1 === item.rangemin) && (value2 === item.rangemax) && (span.innerHTML=" all items"));
+				((value1 > item.rangemin) && (value2 === item.rangemax) && (span.innerHTML=" items >= "+value1));
+				((value1 === item.rangemin) && (value2 < item.rangemax) && (span.innerHTML=" items < "+value2));
+				((value1 > item.rangemin) && (value2 < item.rangemax) && (span.innerHTML="["+value1+", "+value2+")"));
+			}
+			updateSlider1 = () => {
+				v1 = parseInt(input1.value);
+				v2 = parseInt(input2.value);
+				if (item.minvalue === v1) return;
+				item.minvalue = v1;
+				updateRangeCaption(v1,v2);
+				if (v1 > v2) {
+					input2.value = v1;
+					item.maxvalue = v1;
+				}};
+			updateSlider2 = () => {
+				v1 = parseInt(input1.value);
+				v2 = parseInt(input2.value);
+				if (item.maxvalue === v2) return;
+				item.maxvalue = v2;
+				updateRangeCaption(v1,v2);
+				if (v2 < v1) {
+					input1.value = v2;
+					item.minvalue = v2;
+				}};
+			input1.oninput = updateSlider1; 
+			input2.oninput = updateSlider2;
+			input1.onchange = updateSlider1; 
+			input2.onchange = updateSlider2;
 		return div;
 		}
 	}	
