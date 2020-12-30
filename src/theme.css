@@ -11,6 +11,10 @@
 	margin-bottom: 10px;
 }
 
+/* ------------------------------------------------------------ */
+/* Data Grid component */
+/* ------------------------------------------------------------ */
+
 .datagrid-div {
 	font-family: Helvetica, Arial, sans-serif;
 	font-weight: 400;
@@ -39,4 +43,25 @@
 	font-weight: 600;
 	text-align: left;
 	background: #dcffd6; 
+}
+
+/* ------------------------------------------------------------ */
+/* Checkbox Group component */
+/* ------------------------------------------------------------ */
+
+.checkbox-group{
+	font-family: Helvetica, Arial, sans-serif;
+	font-weight: normal;
+	font-size: 14px;
+	padding: 2px;
+	border: 2px solid #ccc; 
+	overflow-y: scroll;
+}
+.checkbox-group label{
+	display: block;
+	margin: 1px 2px;
+}
+.checkbox-group input {
+    margin: 0;
+	margin-right: 5px;
 }

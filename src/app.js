@@ -1,6 +1,9 @@
 Renderer.define("#root",[
 	{
-		component: 'multiselect',
+		component: 'checkgroup',
+		id: 'chkgroupStates',
+		width: "210px",
+		height: "83px",
 		data: GetStateDictionary()
 	}, {
 		component: 'datagrid',
@@ -28,11 +31,3 @@ Renderer.define("#root",[
 		}
 	}
 ]);
-
-document.addEventListener("DOMContentLoaded", function(event) {
-	new SlimSelect({
-		// select: '#slim-multiple'
-		select: document.querySelector('#slim-multiple')
-	});
-});
-
