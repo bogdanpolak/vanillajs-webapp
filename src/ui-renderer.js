@@ -84,7 +84,22 @@ function ComponentBuilder() {
 			}
 		},
 		buildMultiSelect: function(item) {
-			return _nn("div","multiselect1","multiselect-div","MULTI SELECT");
+			const mselect = _nn("select", "multiple-selector",
+				buildOptions(item.data)
+			);
+			mselect.setAttribute("multiple","");
+			
+			return  _nn("div","filter-div",[mselect]);
+
+			function buildOptions(pairs) {
+				const result = [];
+				pairs.forEach(pair => {
+					const option = _nn("option","",pair.value);
+					option.setAttribute("value",pair.key)
+					result.push(option);
+				});
+				return result;
+			}
 		} 
 	}	
 }
@@ -93,7 +108,10 @@ document.addEventListener("DOMContentLoaded", function(event) {
 	const root = document.querySelector(Renderer.rootId);
 	Renderer.items.forEach(item => {
 		const elem = Renderer.create(item);
-		if (elem)
+		if (elem) {
 			root.appendChild(elem);
+			if (item.component === "multiselect")
+				new SlimSelect({ select: elem.firstChild });
+		}
 	});
 });
