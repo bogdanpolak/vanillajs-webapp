@@ -1,6 +1,9 @@
 Renderer.define("#root",[
 	{
-		component: 'multiselect',
+		component: 'checkgroup',
+		id: 'chkgroupStates',
+		width: "210px",
+		height: "83px",
 		data: GetStateDictionary()
 	}, {
 		component: 'datagrid',

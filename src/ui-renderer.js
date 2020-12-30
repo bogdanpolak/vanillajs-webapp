@@ -5,8 +5,8 @@ Renderer.create = function(item) {
 	switch(item.component) {
 	case "datagrid":
 		return componentBuilder.buildDataGrid(item);
-	case "multiselect":
-		return componentBuilder.buildMultiSelect(item);
+	case "checkgroup":
+		return componentBuilder.buildCheckgroup(item);
 	default:
 		return null;
 	}
@@ -25,7 +25,7 @@ function _nn(tagName, className, child) {
 	if (child && typeof child === "object" && child instanceof Array) {
 		child.forEach(item => {
 			if (item && typeof item === "string") 
-				newNode.innerHTML = item;
+				newNode.appendChild(document.createTextNode(item));
 			if (item && typeof item === "object" && item instanceof HTMLElement) 
 				newNode.appendChild(item);
 		});
@@ -83,23 +83,30 @@ function ComponentBuilder() {
 				};
 			}
 		},
-		buildMultiSelect: function(item) {
-			const mselect = _nn("select", "multiple-selector",
-				buildOptions(item.data)
-			);
-			mselect.setAttribute("multiple","");
-			
-			return  _nn("div","filter-div",[mselect]);
-
-			function buildOptions(pairs) {
-				const result = [];
-				pairs.forEach(pair => {
-					const option = _nn("option","",pair.value);
-					option.setAttribute("value",pair.key)
-					result.push(option);
-				});
-				return result;
+		buildCheckgroup: function(item) {
+			if (item && item.hasOwnProperty('data')) {
+				const checkgroup = _nn("div", "checkbox-group",
+				buildLabel(item.data)
+				);
+				if (item && item.hasOwnProperty('id')) {
+					checkgroup.id = item.id;
+				};
+				if (item && item.hasOwnProperty('width'))
+					checkgroup.style.width = item.width; 
+				if (item && item.hasOwnProperty('height'))
+					checkgroup.style.height = item.height; 
+				return  _nn("div","filter-div",[checkgroup]);
 			}
+
+			function buildLabel(pairs) { 
+				return pairs.map(pair => {
+					const input = _nn("input");
+					input.name = pair.key;
+					input.type = "checkbox";
+					return _nn("label","",[input,pair.value]);
+				});
+			};
+				
 		} 
 	}	
 }
