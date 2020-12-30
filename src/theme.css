@@ -1,0 +1,42 @@
+.x-viewport {	
+	width: 100%; 
+	height: 100%; 
+	right: 0; top: 0;
+	margin: 0; 
+	border: 5px;
+}
+.filter-div {
+	display: flex;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.datagrid-div {
+	font-family: Helvetica, Arial, sans-serif;
+	font-weight: 400;
+	font-size: 18px; 
+	width: 100%;
+}
+.datagrid-title {
+	background-color:mediumseagreen;
+	color: white;
+	text-align: center;
+	padding: 10px;
+}
+.datagrid-div table {
+	margin: 1px 0;
+	border-collapse: collapse;
+	font-weight: 100;
+	font-size: 14px;
+	width: 100%;
+}
+.datagrid-div td, .datagrid-div th {
+	border: 1px solid #E6E6E6; 
+	padding: 8px 10px;
+}
+.datagrid-div th { 
+	border: 1px solid #c4c2c2; 
+	font-weight: 600;
+	text-align: left;
+	background: #dcffd6; 
+}
