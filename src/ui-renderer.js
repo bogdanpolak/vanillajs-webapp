@@ -6,7 +6,7 @@ Renderer.create = function(item) {
 	case "datagrid":
 		return componentBuilder.buildDataGrid(item);
 	case "checkgroup":
-		return componentBuilder.buildCheckgroup(item);
+		return componentBuilder.buildCheckGroup(item);
 	case "doublerange":
 		return componentBuilder.buildDoubleRange(item);
 	default:
@@ -39,6 +39,14 @@ function _nn(tagName, className, child) {
 		newNode.appendChild(child);
 	}
 	return newNode;
+}
+
+function _in(type, name, value) {
+	const input = document.createElement("input");
+	input.setAttribute("type", type);
+	input.setAttribute("name", name);
+	input.setAttribute("value", value);
+	return input;
 }
 
 function ComponentBuilder() {
@@ -86,29 +94,24 @@ function ComponentBuilder() {
 			}
 		},
 
-		buildCheckgroup: function(item) {
+		buildCheckGroup: function(item) {
 			if (item && item.hasOwnProperty('data')) {
 				const checkgroup = _nn("div", "checkbox-group",
-				buildLabel(item.data)
+					item.data.map(
+						pair =>  _nn("label","",[
+							_in("checkbox",pair.key),
+							pair.value
+						])
+					)
 				);
-				if (item && item.hasOwnProperty('id')) {
+				if (item && item.hasOwnProperty('id'))
 					checkgroup.id = item.id;
-				};
 				if (item && item.hasOwnProperty('width'))
 					checkgroup.style.width = item.width; 
 				if (item && item.hasOwnProperty('height'))
 					checkgroup.style.height = item.height; 
 				return  _nn("div","filter-div",[checkgroup]);
 			}
-
-			function buildLabel(pairs) { 
-				return pairs.map(pair => {
-					const input = _nn("input");
-					input.name = pair.key;
-					input.type = "checkbox";
-					return _nn("label","",[input,pair.value]);
-				});
-			};				
 		}, 
 
 		buildDoubleRange: function (item) {
