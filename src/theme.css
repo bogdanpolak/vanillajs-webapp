@@ -74,7 +74,9 @@
 	width: 300px;
 }
 .doublerange input {
+	display: block;
 	margin: 0;
+	width: 100%;
 }
 .doublerange p {
 	margin: 0;

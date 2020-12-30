@@ -50,7 +50,14 @@ function _in(type, name, value) {
 }
 
 function ComponentBuilder() {
-		
+
+	_updateId = (htmlelem, item) =>
+		item && item.hasOwnProperty("id") && (htmlelem.id = item.id);
+	_updateWidth = (htmlelem, item) =>
+		item && item.hasOwnProperty('width') && (htmlelem.style.width = item.width); 
+	_updateHeight = (htmlelem, item) =>
+		item && item.hasOwnProperty('height') && (htmlelem.style.height = item.height);
+
 	return {
 		buildDataGrid: function(item) {
 			const table = _nn("table","datagrid-table");
@@ -104,24 +111,35 @@ function ComponentBuilder() {
 						])
 					)
 				);
-				if (item && item.hasOwnProperty('id'))
-					checkgroup.id = item.id;
-				if (item && item.hasOwnProperty('width'))
-					checkgroup.style.width = item.width; 
-				if (item && item.hasOwnProperty('height'))
-					checkgroup.style.height = item.height; 
+				_updateId(checkgroup,item);
+				_updateWidth(checkgroup,item);
+				_updateHeight(checkgroup,item);
 				return  _nn("div","filter-div",[checkgroup]);
 			}
 		}, 
 
 		buildDoubleRange: function (item) {
-			/* 		
-			<div class="doublerange" style="width:300px;">
-			<input type="range" name="rangeStart" style="width:100%;" min="0" max="100" value="20" step="5">
-			<input type="range" name="rangeEnd" style="width:100%;" min="0" max="100" value="65" step="5">
-			<p>Range: [20, 65] </p>
-			</div>
-			*/
+			const input1 = _in("range","rangeStart",item.minvalue);
+			input1.setAttribute("min",item.rangemin);
+			input1.setAttribute("max",item.rangemax);
+			input1.setAttribute("step",item.step);
+			const input2 = _in("range","rangeEnd",item.maxvalue);
+			input2.setAttribute("min",item.rangemin);
+			input2.setAttribute("max",item.rangemax);
+			input2.setAttribute("step",item.step);
+			const div = _nn("div","doublerange",[
+				input1,
+				input2,
+				_nn("p","",[
+					"Range: [",
+					_nn("span","range2-display-min","20")," ",
+					_nn("span","range2-display-max","65"),"]"
+				])	
+			]);
+			_updateId(div,item);
+			_updateWidth(div,item);
+			_updateHeight(div,item);
+		return div;
 		}
 	}	
 }

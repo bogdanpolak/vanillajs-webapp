@@ -5,6 +5,7 @@ Renderer.define("#root",[
 		width: "220px",
 		rangemin: 0,
 		rangemax: 100,
+		step: 5,
 		minvalue: 35,
 		maxvalue: 60	
 	}, {
