@@ -65,3 +65,20 @@
     margin: 0;
 	margin-right: 5px;
 }
+
+/* ------------------------------------------------------------ */
+/* Double Range component */
+/* ------------------------------------------------------------ */
+
+.doublerange {
+	width: 300px;
+}
+.doublerange input {
+	margin: 0;
+}
+.doublerange p {
+	margin: 0;
+	position: relative;
+	top: 0px;
+	text-align: center;
+}

@@ -7,6 +7,8 @@ Renderer.create = function(item) {
 		return componentBuilder.buildDataGrid(item);
 	case "checkgroup":
 		return componentBuilder.buildCheckgroup(item);
+	case "doublerange":
+		return componentBuilder.buildDoubleRange(item);
 	default:
 		return null;
 	}
@@ -83,6 +85,7 @@ function ComponentBuilder() {
 				};
 			}
 		},
+
 		buildCheckgroup: function(item) {
 			if (item && item.hasOwnProperty('data')) {
 				const checkgroup = _nn("div", "checkbox-group",
@@ -105,9 +108,18 @@ function ComponentBuilder() {
 					input.type = "checkbox";
 					return _nn("label","",[input,pair.value]);
 				});
-			};
-				
-		} 
+			};				
+		}, 
+
+		buildDoubleRange: function (item) {
+			/* 		
+			<div class="doublerange" style="width:300px;">
+			<input type="range" name="rangeStart" style="width:100%;" min="0" max="100" value="20" step="5">
+			<input type="range" name="rangeEnd" style="width:100%;" min="0" max="100" value="65" step="5">
+			<p>Range: [20, 65] </p>
+			</div>
+			*/
+		}
 	}	
 }
 
