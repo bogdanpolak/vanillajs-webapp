@@ -1,19 +1,26 @@
 Renderer.define("#root",[
 	{
-		component: 'doublerange',
-		id: 'rangeAge',
-		width: "220px",
-		rangemin: 0,
-		rangemax: 100,
-		step: 5,
-		minvalue: 35,
-		maxvalue: 60	
-	}, {
-		component: 'checkgroup',
-		id: 'chkgroupStates',
-		width: "210px",
-		height: "83px",
-		data: GetStateDictionary()
+		component: 'flexpanel',
+		items: [
+			{
+				component: 'doublerange',
+				id: 'rangeAge',
+				width: "220px",
+				title: 'Age filter',
+				rangemin: 0,
+				rangemax: 100,
+				step: 5,
+				minvalue: 35,
+				maxvalue: 60	
+			}, {
+				component: 'checkgroup',
+				id: 'chkgroupStates',
+				width: "220px",
+				height: "83px",
+				title: 'State filter',
+				data: GetStateDictionary()
+			}
+		]
 	}, {
 		component: 'datagrid',
 		title: 'PERSONAL DETAILS',

@@ -1,23 +1,36 @@
-var Renderer = {};
-Renderer.create = function(item) {
-	if (!item || !item.hasOwnProperty('component')) return null;
-	const componentBuilder = ComponentBuilder();
-	switch(item.component) {
-	case "datagrid":
-		return componentBuilder.buildDataGrid(item);
-	case "checkgroup":
-		return componentBuilder.buildCheckGroup(item);
-	case "doublerange":
-		return componentBuilder.buildDoubleRange(item);
-	default:
-		return null;
+var Renderer = {
+	define: function(rootId, items){
+		this.rootId = rootId;
+		this.items = items;
+	},
+	buildUI: function(item) {
+		const componentBuilder = ComponentBuilder();
+		return renderItems(Renderer.items);
+
+		function renderItems(items) {
+			var elems = items.map(item => renderItem(item));
+			return elems;
+		}
+		function renderItem(item) {
+			if (!item || !item.hasOwnProperty('component')) return null;
+			switch(item.component) {
+			case "flexpanel":
+				if (!item.hasOwnProperty('items')) return null;
+				var elems = renderItems(item.items);
+				return componentBuilder.buildPanel(item,elems);
+			case "datagrid":
+				return componentBuilder.buildDataGrid(item);
+			case "checkgroup":
+				return componentBuilder.buildCheckGroup(item);
+			case "doublerange":
+				return componentBuilder.buildDoubleRange(item);
+			default:
+				return null;
+			}
+		}
+
 	}
 };
-
-Renderer.define= function(rootId, items){
-	this.rootId = rootId;
-	this.items = items;
-}
 
 function _nn(tagName, className, child) {
 	var newNode = document.createElement(tagName);
@@ -103,7 +116,7 @@ function ComponentBuilder() {
 
 		buildCheckGroup: function(item) {
 			if (item && item.hasOwnProperty('data')) {
-				const checkgroup = _nn("div", "checkbox-group",
+				const checkboxGroup = _nn("div", "checkbox-group",
 					item.data.map(
 						pair =>  _nn("label","",[
 							_in("checkbox",pair.key),
@@ -111,10 +124,12 @@ function ComponentBuilder() {
 						])
 					)
 				);
-				_updateId(checkgroup,item);
-				_updateWidth(checkgroup,item);
-				_updateHeight(checkgroup,item);
-				return  _nn("div","filter-div",[checkgroup]);
+				_updateId(checkboxGroup,item);
+				_updateWidth(checkboxGroup,item);
+				_updateHeight(checkboxGroup,item);
+				childElems = (item && item.hasOwnProperty("title")) ?
+					[_nn("h1","title",item.title),checkboxGroup] : [checkboxGroup];
+				return _nn("div", "checkbox-group-container", childElems)
 			}
 		}, 
 
@@ -128,11 +143,11 @@ function ComponentBuilder() {
 			input2.setAttribute("max",item.rangemax);
 			input2.setAttribute("step",item.step);
 			const span = _nn("span","range2-display","");
-			const div = _nn("div","doublerange",[
-				input1,
-				input2,
-				_nn("p","",["Range:",span])	
-			]);
+			const caption = _nn("p","",["Range:",span]);
+			const childElems = (item && item.hasOwnProperty("title")) ?
+				[_nn("h1","title",item.title),input1,input2,caption] : 
+				[input1,input2,caption];
+			const div = _nn("div","doublerange",childElems);
 			updateRangeCaption(item.minvalue,item.maxvalue);
 			_updateId(div,item);
 			_updateWidth(div,item);
@@ -178,18 +193,17 @@ function ComponentBuilder() {
 					span.innerHTML=` ${value1} .. ${value2}`;
 			};
 
+		},
+
+		buildPanel: function (item, htmlElemnts) {
+			const div = _nn("div", "panel-flex", htmlElemnts);
+			return div;
 		}
 	}	
 }
 
 document.addEventListener("DOMContentLoaded", function(event) {
 	const root = document.querySelector(Renderer.rootId);
-	Renderer.items.forEach(item => {
-		const elem = Renderer.create(item);
-		if (elem) {
-			root.appendChild(elem);
-			if (item.component === "multiselect")
-				new SlimSelect({ select: elem.firstChild });
-		}
-	});
+	const elemnts = Renderer.buildUI();
+	elemnts.forEach(elem => root.appendChild(elem));
 });
