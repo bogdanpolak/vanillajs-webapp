@@ -6,6 +6,7 @@ Renderer.define("#root",[
 				component: 'doublerange',
 				id: 'rangeAge',
 				width: "220px",
+				title: 'Age filter',
 				rangemin: 0,
 				rangemax: 100,
 				step: 5,
@@ -14,8 +15,9 @@ Renderer.define("#root",[
 			}, {
 				component: 'checkgroup',
 				id: 'chkgroupStates',
-				width: "210px",
+				width: "220px",
 				height: "83px",
+				title: 'State filter',
 				data: GetStateDictionary()
 			}
 		]

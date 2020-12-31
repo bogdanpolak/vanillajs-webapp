@@ -127,7 +127,9 @@ function ComponentBuilder() {
 				_updateId(checkboxGroup,item);
 				_updateWidth(checkboxGroup,item);
 				_updateHeight(checkboxGroup,item);
-				return checkboxGroup;
+				childElems = (item && item.hasOwnProperty("title")) ?
+					[_nn("h1","title",item.title),checkboxGroup] : [checkboxGroup];
+				return _nn("div", "checkbox-group-container", childElems)
 			}
 		}, 
 
@@ -141,11 +143,11 @@ function ComponentBuilder() {
 			input2.setAttribute("max",item.rangemax);
 			input2.setAttribute("step",item.step);
 			const span = _nn("span","range2-display","");
-			const div = _nn("div","doublerange",[
-				input1,
-				input2,
-				_nn("p","",["Range:",span])	
-			]);
+			const caption = _nn("p","",["Range:",span]);
+			const childElems = (item && item.hasOwnProperty("title")) ?
+				[_nn("h1","title",item.title),input1,input2,caption] : 
+				[input1,input2,caption];
+			const div = _nn("div","doublerange",childElems);
 			updateRangeCaption(item.minvalue,item.maxvalue);
 			_updateId(div,item);
 			_updateWidth(div,item);

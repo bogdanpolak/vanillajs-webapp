@@ -53,10 +53,21 @@
 /* Checkbox Group component */
 /* ------------------------------------------------------------ */
 
-.checkbox-group{
+.checkbox-group-container {
 	font-family: Helvetica, Arial, sans-serif;
 	font-weight: normal;
 	font-size: 14px;
+	margin-right: 10px;
+}
+.checkbox-group-container h1 {
+	font-size: 14px;
+	margin: 0;
+	text-align: center;
+	padding: 5px;
+	background-color: #eee;
+	margin-bottom: 5px;
+}
+.checkbox-group {
 	padding: 2px;
 	border: 2px solid #ccc; 
 	overflow-y: scroll;
@@ -78,6 +89,15 @@
 	width: 300px;
 	font-family: Helvetica, Arial, sans-serif;
 	font-size: 14px;
+	margin-right: 10px;
+}
+.doublerange h1 {
+	font-size: 14px;
+	margin: 0;
+	text-align: center;
+	padding: 5px;
+	background-color: #eee;
+	margin-bottom: 5px;
 }
 .doublerange input {
 	display: block;
