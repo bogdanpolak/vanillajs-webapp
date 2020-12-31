@@ -72,6 +72,8 @@
 
 .doublerange {
 	width: 300px;
+	font-family: Helvetica, Arial, sans-serif;
+	font-size: 14px;
 }
 .doublerange input {
 	display: block;
@@ -79,8 +81,11 @@
 	width: 100%;
 }
 .doublerange p {
-	margin: 0;
 	position: relative;
+	margin: 0;
 	top: 0px;
 	text-align: center;
+	font-size: 13px;
+	font-weight: normal;
+	color: darkgray;
 }
