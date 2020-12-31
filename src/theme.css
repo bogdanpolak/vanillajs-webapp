@@ -65,3 +65,27 @@
     margin: 0;
 	margin-right: 5px;
 }
+
+/* ------------------------------------------------------------ */
+/* Double Range component */
+/* ------------------------------------------------------------ */
+
+.doublerange {
+	width: 300px;
+	font-family: Helvetica, Arial, sans-serif;
+	font-size: 14px;
+}
+.doublerange input {
+	display: block;
+	margin: 0;
+	width: 100%;
+}
+.doublerange p {
+	position: relative;
+	margin: 0;
+	top: 0px;
+	text-align: center;
+	font-size: 13px;
+	font-weight: normal;
+	color: darkgray;
+}

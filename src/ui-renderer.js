@@ -6,7 +6,9 @@ Renderer.create = function(item) {
 	case "datagrid":
 		return componentBuilder.buildDataGrid(item);
 	case "checkgroup":
-		return componentBuilder.buildCheckgroup(item);
+		return componentBuilder.buildCheckGroup(item);
+	case "doublerange":
+		return componentBuilder.buildDoubleRange(item);
 	default:
 		return null;
 	}
@@ -39,8 +41,23 @@ function _nn(tagName, className, child) {
 	return newNode;
 }
 
+function _in(type, name, value) {
+	const input = document.createElement("input");
+	input.setAttribute("type", type);
+	input.setAttribute("name", name);
+	input.setAttribute("value", value);
+	return input;
+}
+
 function ComponentBuilder() {
-		
+
+	_updateId = (htmlelem, item) =>
+		item && item.hasOwnProperty("id") && (htmlelem.id = item.id);
+	_updateWidth = (htmlelem, item) =>
+		item && item.hasOwnProperty('width') && (htmlelem.style.width = item.width); 
+	_updateHeight = (htmlelem, item) =>
+		item && item.hasOwnProperty('height') && (htmlelem.style.height = item.height);
+
 	return {
 		buildDataGrid: function(item) {
 			const table = _nn("table","datagrid-table");
@@ -83,31 +100,85 @@ function ComponentBuilder() {
 				};
 			}
 		},
-		buildCheckgroup: function(item) {
+
+		buildCheckGroup: function(item) {
 			if (item && item.hasOwnProperty('data')) {
 				const checkgroup = _nn("div", "checkbox-group",
-				buildLabel(item.data)
+					item.data.map(
+						pair =>  _nn("label","",[
+							_in("checkbox",pair.key),
+							pair.value
+						])
+					)
 				);
-				if (item && item.hasOwnProperty('id')) {
-					checkgroup.id = item.id;
-				};
-				if (item && item.hasOwnProperty('width'))
-					checkgroup.style.width = item.width; 
-				if (item && item.hasOwnProperty('height'))
-					checkgroup.style.height = item.height; 
+				_updateId(checkgroup,item);
+				_updateWidth(checkgroup,item);
+				_updateHeight(checkgroup,item);
 				return  _nn("div","filter-div",[checkgroup]);
 			}
+		}, 
 
-			function buildLabel(pairs) { 
-				return pairs.map(pair => {
-					const input = _nn("input");
-					input.name = pair.key;
-					input.type = "checkbox";
-					return _nn("label","",[input,pair.value]);
-				});
+		buildDoubleRange: function (item) {
+			const input1 = _in("range","rangeStart",item.minvalue);
+			input1.setAttribute("min",item.rangemin);
+			input1.setAttribute("max",item.rangemax);
+			input1.setAttribute("step",item.step);
+			const input2 = _in("range","rangeEnd",item.maxvalue);
+			input2.setAttribute("min",item.rangemin);
+			input2.setAttribute("max",item.rangemax);
+			input2.setAttribute("step",item.step);
+			const span = _nn("span","range2-display","");
+			const div = _nn("div","doublerange",[
+				input1,
+				input2,
+				_nn("p","",["Range:",span])	
+			]);
+			updateRangeCaption(item.minvalue,item.maxvalue);
+			_updateId(div,item);
+			_updateWidth(div,item);
+			_updateHeight(div,item);
+			const updateSlider1 = () => {
+				v1 = parseInt(input1.value);
+				v2 = parseInt(input2.value);
+				if (item.minvalue === v1) return;
+				item.minvalue = v1;
+				if (v1 > v2) {
+					input2.value = v1;
+					item.maxvalue = v1;
+					v2 = v1;
+				}
+				updateRangeCaption(v1,v2);
 			};
-				
-		} 
+			const updateSlider2 = () => {
+				v1 = parseInt(input1.value);
+				v2 = parseInt(input2.value);
+				if (item.maxvalue === v2) return;
+				item.maxvalue = v2;
+				if (v2 < v1) {
+					input1.value = v2;
+					item.minvalue = v2;
+					v1 = v2;
+				}
+				updateRangeCaption(v1,v2);
+			};
+			input1.oninput = updateSlider1; 
+			input2.oninput = updateSlider2;
+			input1.onchange = updateSlider1; 
+			input2.onchange = updateSlider2;
+			return div;
+
+			function updateRangeCaption(value1,value2) {
+				if ((value1 == item.rangemin) && (value2 == item.rangemax))
+					span.innerHTML=" all items";
+				else if ((value1 > item.rangemin) && (value2 == item.rangemax))
+					span.innerHTML=` items >= ${value1}`;
+				else if ((value1 == item.rangemin) && (value2 < item.rangemax))
+					span.innerHTML=` items <= ${value2}`;
+				else 
+					span.innerHTML=` ${value1} .. ${value2}`;
+			};
+
+		}
 	}	
 }
 
