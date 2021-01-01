@@ -1,4 +1,4 @@
-Renderer.define("#root",[
+Renderer.defineAndBuild("#root",[
 	{
 		component: 'flexpanel',
 		items: [

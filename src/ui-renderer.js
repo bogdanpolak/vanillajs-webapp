@@ -5,7 +5,13 @@ var Renderer = {
 
 	designItems: null,
 	componentBuilder: null,
-
+	defineAndBuild: function(rootId, items){
+		this.define(rootId, items);
+		self = this;
+		document.addEventListener("DOMContentLoaded", function(event) {
+			self.build();
+		});
+	},
 	define: function(rootId, items){
 		this.rootId = rootId;
 		this.designItems = items;
@@ -13,11 +19,16 @@ var Renderer = {
 		(!this.designItems) && console.log(this._ex_MissingItems);
 		(!this.componentBuilder) && (console.log(this._ex_BuilderFailure));
 	},
-	buildUI: function () {
-		if (this.designItems)
-			return this.designItems && this._renderItems(this.designItems);
-		else
+	build: function () {
+		(!this.designItems) && (console.log(this._ex_DefineUIFirst));
+		if (!this.designItems) return;
+		const root = document.querySelector(Renderer.rootId);
+		if (!root) {
 			console.log(this._ex_DefineUIFirst);
+			return false
+		}
+		const elemnts = this._renderItems(this.designItems);
+		elemnts.forEach(elem => root.appendChild(elem));
 	},
 	_renderItems: (items) => items.map(item => Renderer._renderItem(item)),
 	_renderItem: function(item) {
@@ -209,9 +220,3 @@ function ComponentBuilder() {
 		}
 	}	
 }
-
-document.addEventListener("DOMContentLoaded", function(event) {
-	const root = document.querySelector(Renderer.rootId);
-	const elemnts = Renderer.buildUI();
-	elemnts.forEach(elem => root.appendChild(elem));
-});
