@@ -1,16 +1,21 @@
 var Renderer = {
 	_ex_MissingItems: '[Renderer] Exception. No UI Design Items provided.',
 	_ex_BuilderFailure: '[Renderer] Exception. Not able to create ComponentBuilder',
-	_ex_DefineUIFirst: '[Renderer] Warning! Define UI design. Call "Renderer.define" before DOMContentLoaded will be called',
+	_ex_DefineUIFirst: '[Renderer] Define page UI design first',
+	_ex_RequiredRoot: '[Renderer] Not able to build HTML: cant find root element with id:',
 
 	designItems: null,
 	componentBuilder: null,
+	isDefined: false,
+
 	defineAndBuild: function(rootId, items){
 		this.define(rootId, items);
-		self = this;
-		document.addEventListener("DOMContentLoaded", function(event) {
-			self.build();
-		});
+		if (this.isDefined) {
+			self = this;
+			document.addEventListener("DOMContentLoaded", function(event) {
+				self.build();
+			});
+		}
 	},
 	define: function(rootId, items){
 		this.rootId = rootId;
@@ -18,15 +23,15 @@ var Renderer = {
 		this.componentBuilder = ComponentBuilder();
 		(!this.designItems) && console.log(this._ex_MissingItems);
 		(!this.componentBuilder) && (console.log(this._ex_BuilderFailure));
+		this.isDefined = (this.rootId) && (this.designItems) && 
+			(this.componentBuilder);
 	},
 	build: function () {
-		(!this.designItems) && (console.log(this._ex_DefineUIFirst));
+		(!this.isDefined) && (console.log(this._ex_DefineUIFirst));
 		if (!this.designItems) return;
-		const root = document.querySelector(Renderer.rootId);
-		if (!root) {
-			console.log(this._ex_DefineUIFirst);
-			return false
-		}
+		const root = document.querySelector(this.rootId);
+		(!root) && console.log(this._ex_RequiredRoot+` ${this.rootId}`);
+		if (!root) return;
 		const elemnts = this._renderItems(this.designItems);
 		elemnts.forEach(elem => root.appendChild(elem));
 	},
