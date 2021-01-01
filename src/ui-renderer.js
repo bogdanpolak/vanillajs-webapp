@@ -64,11 +64,13 @@ function _in(type, name, value) {
 
 function ComponentBuilder() {
 
-	_updateId = (htmlelem, item) =>
+	const _hasProperty = (obj, prop) =>
+		obj && obj.hasOwnProperty(prop);
+	const _updateId = (htmlelem, item) =>
 		item && item.hasOwnProperty("id") && (htmlelem.id = item.id);
-	_updateWidth = (htmlelem, item) =>
+	const _updateWidth = (htmlelem, item) =>
 		item && item.hasOwnProperty('width') && (htmlelem.style.width = item.width); 
-	_updateHeight = (htmlelem, item) =>
+	const _updateHeight = (htmlelem, item) =>
 		item && item.hasOwnProperty('height') && (htmlelem.style.height = item.height);
 
 	return {
@@ -104,9 +106,9 @@ function ComponentBuilder() {
 						td.innerHTML = value;
 						htmltableRow.appendChild(td);
 					}
-					htmltableRow.onclick = function() {
-						return item.listeners.select(htmltableRow,rowObj)
-					};  
+					if (_hasProperty(item.listeners,'select'))
+						htmltableRow.onclick = () => item.listeners.select(
+							htmltableRow,rowObj);
 				};
 				for (var i=0;i<item.data.length;i++) {
 					addGridRow(i);
