@@ -1,34 +1,40 @@
 var Renderer = {
+	_ex_MissingItems: '[Renderer] Exception. No UI Design Items provided.',
+	_ex_BuilderFailure: '[Renderer] Exception. Not able to create ComponentBuilder',
+	_ex_DefineUIFirst: '[Renderer] Warning! Define UI design. Call "Renderer.define" before DOMContentLoaded will be called',
+
+	designItems: null,
+	componentBuilder: null,
+
 	define: function(rootId, items){
 		this.rootId = rootId;
-		this.items = items;
+		this.designItems = items;
+		this.componentBuilder = ComponentBuilder();
+		(!this.designItems) && console.log(this._ex_MissingItems);
+		(!this.componentBuilder) && (console.log(this._ex_BuilderFailure));
 	},
-	buildUI: function(item) {
-		const componentBuilder = ComponentBuilder();
-		return renderItems(Renderer.items);
-
-		function renderItems(items) {
-			var elems = items.map(item => renderItem(item));
-			return elems;
-		}
-		function renderItem(item) {
-			if (!item || !item.hasOwnProperty('component')) return null;
-			switch(item.component) {
+	buildUI: function () {
+		if (this.designItems)
+			return this.designItems && this._renderItems(this.designItems);
+		else
+			console.log(this._ex_DefineUIFirst);
+	},
+	_renderItems: (items) => items.map(item => Renderer._renderItem(item)),
+	_renderItem: function(item) {
+		const builder = this.componentBuilder;
+		switch(item.component) {
 			case "flexpanel":
-				if (!item.hasOwnProperty('items')) return null;
-				var elems = renderItems(item.items);
-				return componentBuilder.buildPanel(item,elems);
+				return item.hasOwnProperty('items') && 
+					builder.buildPanel(item,this._renderItems(item.items));
 			case "datagrid":
-				return componentBuilder.buildDataGrid(item);
+				return builder.buildDataGrid(item);
 			case "checkgroup":
-				return componentBuilder.buildCheckGroup(item);
+				return builder.buildCheckGroup(item);
 			case "doublerange":
-				return componentBuilder.buildDoubleRange(item);
+				return builder.buildDoubleRange(item);
 			default:
 				return null;
-			}
 		}
-
 	}
 };
 
