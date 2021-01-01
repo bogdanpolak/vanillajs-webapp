@@ -1,11 +1,9 @@
 var Renderer = {
 	_ex_MissingItems: '[Renderer] Exception. No UI Design Items provided.',
-	_ex_BuilderFailure: '[Renderer] Exception. Not able to create ComponentBuilder',
 	_ex_DefineUIFirst: '[Renderer] Define page UI design first',
 	_ex_RequiredRoot: '[Renderer] Not able to build HTML: cant find root element with id:',
 
 	designItems: null,
-	componentBuilder: null,
 	isDefined: false,
 
 	defineAndBuild: function(rootId, items){
@@ -20,28 +18,28 @@ var Renderer = {
 	define: function(rootId, items){
 		this.rootId = rootId;
 		this.designItems = items;
-		this.componentBuilder = ComponentBuilder();
 		(!this.designItems) && console.log(this._ex_MissingItems);
-		(!this.componentBuilder) && (console.log(this._ex_BuilderFailure));
-		this.isDefined = (this.rootId) && (this.designItems) && 
-			(this.componentBuilder);
+		this.isDefined = (this.rootId) && (this.designItems);
 	},
-	build: function () {
+	build: function (builder) {
+		if (!builder) 
+			builder = ComponentBuilder();
 		(!this.isDefined) && (console.log(this._ex_DefineUIFirst));
 		if (!this.designItems) return;
 		const root = document.querySelector(this.rootId);
 		(!root) && console.log(this._ex_RequiredRoot+` ${this.rootId}`);
 		if (!root) return;
-		const elemnts = this._renderItems(this.designItems);
+		const elemnts = this._renderItems(this.designItems,builder);
 		elemnts.forEach(elem => root.appendChild(elem));
 	},
-	_renderItems: (items) => items.map(item => Renderer._renderItem(item)),
-	_renderItem: function(item) {
-		const builder = this.componentBuilder;
+	_renderItems: function (items,builder) {
+		return items.map(item => Renderer._renderItem(item,builder));
+	},
+	_renderItem: function(item,builder) {
 		switch(item.component) {
 			case "flexpanel":
 				return item.hasOwnProperty('items') && 
-					builder.buildPanel(item,this._renderItems(item.items));
+					builder.buildPanel(item,this._renderItems(item.items,builder));
 			case "datagrid":
 				return builder.buildDataGrid(item);
 			case "checkgroup":
