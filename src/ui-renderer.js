@@ -119,7 +119,7 @@ function ComponentBuilder() {
 					const htmltableRow = body.insertRow(i);
 					const rowObj = {};
 					for (colIdx=0; colIdx<item.columns.length; colIdx++) {
-						prop = item.columns[colIdx].dataIndex;
+						prop = item.columns[colIdx].dataField;
 						const value = item.data[rowidx][prop];
 						rowObj[prop] = value;
 						td = document.createElement('td');
