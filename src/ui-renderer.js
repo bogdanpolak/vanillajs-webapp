@@ -52,54 +52,57 @@ var Renderer = {
 	}
 };
 
-function _nn(tagName, className, child) {
-	var newNode = document.createElement(tagName);
-	if (className) {
-		newNode.classList.add(className);
+HtmlBuilder = {
+	buildNewElement: function (tagName, className, child) {
+		var newNode = document.createElement(tagName);
+		if (className) {
+			newNode.classList.add(className);
+		}
+		if (child && typeof child === "object" && child instanceof Array) {
+			child.forEach(item => {
+				if (item && typeof item === "string") 
+					newNode.appendChild(document.createTextNode(item));
+				if (item && typeof item === "object" && item instanceof HTMLElement) 
+					newNode.appendChild(item);
+			});
+		}
+		if (child && typeof child === "string") {
+			newNode.innerHTML = child;
+		}
+		if (child && typeof child === "object" && child instanceof HTMLElement) {
+			newNode.appendChild(child);
+		}
+		return newNode;
+	},
+	buildNewInput: function (type, name, value) {
+		const input = document.createElement("input");
+		input.setAttribute("type", type);
+		input.setAttribute("name", name);
+		input.setAttribute("value", value);
+		return input;
+	},
+	updateNodeProperties: function (htmlelem, item) {
+		if (!item) return;
+		if (item.hasOwnProperty("id")) htmlelem.id = item.id;
+		if (item.hasOwnProperty('width')) htmlelem.style.width = item.width; 
+		if (item.hasOwnProperty('height')) htmlelem.style.height = item.height;
 	}
-	if (child && typeof child === "object" && child instanceof Array) {
-		child.forEach(item => {
-			if (item && typeof item === "string") 
-				newNode.appendChild(document.createTextNode(item));
-			if (item && typeof item === "object" && item instanceof HTMLElement) 
-				newNode.appendChild(item);
-		});
-	}
-	if (child && typeof child === "string") {
-		newNode.innerHTML = child;
-	}
-	if (child && typeof child === "object" && child instanceof HTMLElement) {
-		newNode.appendChild(child);
-	}
-	return newNode;
-}
-
-function _in(type, name, value) {
-	const input = document.createElement("input");
-	input.setAttribute("type", type);
-	input.setAttribute("name", name);
-	input.setAttribute("value", value);
-	return input;
 }
 
 function ComponentBuilder() {
-
-	const _hasProperty = (obj, prop) =>
-		obj && obj.hasOwnProperty(prop);
-	const _updateId = (htmlelem, item) =>
-		item && item.hasOwnProperty("id") && (htmlelem.id = item.id);
-	const _updateWidth = (htmlelem, item) =>
-		item && item.hasOwnProperty('width') && (htmlelem.style.width = item.width); 
-	const _updateHeight = (htmlelem, item) =>
-		item && item.hasOwnProperty('height') && (htmlelem.style.height = item.height);
+	const _newelem = HtmlBuilder.buildNewElement;
+	const _ni = HtmlBuilder.buildNewInput;
+	const _updateProperties = HtmlBuilder.updateNodeProperties;
+	const _hasProperty = (obj, prop) => obj && obj.hasOwnProperty(prop);
 
 	return {
 		buildDataGrid: function(item) {
-			const table = _nn("table","datagrid-table");
+			const table = _newelem("table","datagrid-table");
 			buildDataTableHeader(table);
 			buildDataTableBody(table);
-			const grid = _nn("div","datagrid-div",[
-				_nn("div","datagrid-title",item.title),
+			_updateProperties
+			const grid = _newelem("div","datagrid-div",[
+				_newelem("div","datagrid-title",item.title),
 				table
 			]);
 			return grid;
@@ -137,44 +140,51 @@ function ComponentBuilder() {
 		},
 
 		buildCheckGroup: function(item) {
-			if (item && item.hasOwnProperty('data')) {
-				const checkboxGroup = _nn("div", "checkbox-group",
-					item.data.map(
-						pair =>  _nn("label","",[
-							_in("checkbox",pair.key),
-							pair.value
-						])
-					)
-				);
-				_updateId(checkboxGroup,item);
-				_updateWidth(checkboxGroup,item);
-				_updateHeight(checkboxGroup,item);
-				childElems = (item && item.hasOwnProperty("title")) ?
-					[_nn("h1","title",item.title),checkboxGroup] : [checkboxGroup];
-				return _nn("div", "checkbox-group-container", childElems)
-			}
+			if (!_hasProperty(item,'data')) return null;
+			const checkboxGroup = _newelem("div", "checkbox-group",
+				item.data.map(
+					pair =>  _newelem("label","",[
+						_ni("checkbox",pair.key),
+						pair.value
+					])
+				)
+			);
+			_updateProperties(checkboxGroup,item);
+			const children = (_hasProperty(item,"title")) ? 
+				[_newelem("h1","title",item.title), checkboxGroup] :
+				[checkboxGroup];
+			div = _newelem("div", "checkbox-group-container", children);
+			return div;
 		}, 
 
 		buildDoubleRange: function (item) {
-			const input1 = _in("range","rangeStart",item.minvalue);
+			const input1 = _ni("range","rangeStart",item.minvalue);
 			input1.setAttribute("min",item.rangemin);
 			input1.setAttribute("max",item.rangemax);
 			input1.setAttribute("step",item.step);
-			const input2 = _in("range","rangeEnd",item.maxvalue);
+			input1.oninput = updateSlider1; 
+			input1.onchange = updateSlider1; 
+
+			const input2 = _ni("range","rangeEnd",item.maxvalue);
 			input2.setAttribute("min",item.rangemin);
 			input2.setAttribute("max",item.rangemax);
 			input2.setAttribute("step",item.step);
-			const span = _nn("span","range2-display","");
-			const caption = _nn("p","",["Range:",span]);
-			const childElems = (item && item.hasOwnProperty("title")) ?
-				[_nn("h1","title",item.title),input1,input2,caption] : 
-				[input1,input2,caption];
-			const div = _nn("div","doublerange",childElems);
+			input2.oninput = updateSlider2;
+			input2.onchange = updateSlider2;
+
+			const span = _newelem("span","range2-display","");
+			const caption = _newelem("p","",["Range:",span]);
 			updateRangeCaption(item.minvalue,item.maxvalue);
-			_updateId(div,item);
-			_updateWidth(div,item);
-			_updateHeight(div,item);
-			const updateSlider1 = () => {
+
+			const div1 = _newelem("div","double-range",[input1,input2,caption]);
+			_updateProperties(div1,item);
+
+			const children = _hasProperty(item,"title") ?
+				[_newelem("h1","title",item.title),div1] : div1;
+			const div2 = _newelem("div", "double-range-container", children);
+			return div2;
+
+			function updateSlider1 (){
 				v1 = parseInt(input1.value);
 				v2 = parseInt(input2.value);
 				if (item.minvalue === v1) return;
@@ -186,7 +196,7 @@ function ComponentBuilder() {
 				}
 				updateRangeCaption(v1,v2);
 			};
-			const updateSlider2 = () => {
+			function updateSlider2 (){
 				v1 = parseInt(input1.value);
 				v2 = parseInt(input2.value);
 				if (item.maxvalue === v2) return;
@@ -198,12 +208,6 @@ function ComponentBuilder() {
 				}
 				updateRangeCaption(v1,v2);
 			};
-			input1.oninput = updateSlider1; 
-			input2.oninput = updateSlider2;
-			input1.onchange = updateSlider1; 
-			input2.onchange = updateSlider2;
-			return div;
-
 			function updateRangeCaption(value1,value2) {
 				if ((value1 == item.rangemin) && (value2 == item.rangemax))
 					span.innerHTML=" all items";
@@ -218,7 +222,8 @@ function ComponentBuilder() {
 		},
 
 		buildPanel: function (item, htmlElemnts) {
-			const div = _nn("div", "panel-flex", htmlElemnts);
+			const div = _newelem("div", "panel-flex", htmlElemnts);
+			_updateProperties(div,item);
 			return div;
 		}
 	}	
