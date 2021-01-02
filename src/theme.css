@@ -43,10 +43,10 @@
 	padding: 8px 10px;
 }
 .datagrid-div th { 
-	border: 1px solid #c4c2c2; 
+	border: 1px solid seagreen; 
 	font-weight: 600;
 	text-align: left;
-	background: #dcffd6; 
+	background: lawngreen;
 }
 
 /* ------------------------------------------------------------ */
@@ -55,11 +55,10 @@
 
 .checkbox-group-container {
 	font-family: Helvetica, Arial, sans-serif;
-	font-weight: normal;
-	font-size: 14px;
 	margin-right: 10px;
 }
 .checkbox-group-container h1 {
+	font-weight: normal;
 	font-size: 14px;
 	margin: 0;
 	text-align: center;
@@ -68,6 +67,7 @@
 	margin-bottom: 5px;
 }
 .checkbox-group {
+	font-size: 14px;
 	padding: 2px;
 	border: 2px solid #ccc; 
 	overflow-y: scroll;
@@ -85,31 +85,33 @@
 /* Double Range component */
 /* ------------------------------------------------------------ */
 
-.doublerange {
-	width: 300px;
+.double-range-container {
 	font-family: Helvetica, Arial, sans-serif;
-	font-size: 14px;
 	margin-right: 10px;
 }
-.doublerange h1 {
+.double-range-container h1 {
 	font-size: 14px;
+	font-weight: normal;
 	margin: 0;
 	text-align: center;
 	padding: 5px;
 	background-color: #eee;
 	margin-bottom: 5px;
 }
-.doublerange input {
+.double-range {
+	font-size: 14px;
+}
+.double-range input {
 	display: block;
 	margin: 0;
 	width: 100%;
 }
-.doublerange p {
+.double-range p {
 	position: relative;
 	margin: 0;
 	top: 0px;
 	text-align: center;
 	font-size: 13px;
 	font-weight: normal;
-	color: darkgray;
+	color: seagreen;
 }
