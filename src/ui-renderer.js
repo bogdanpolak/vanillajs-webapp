@@ -13,7 +13,7 @@ var Renderer = {
 	_ex_MissingItems: '[Renderer] Exception. No UI Design Items provided.',
 	_ex_DefineUIFirst: '[Renderer] Define page UI design first',
 	_ex_RequiredRoot: '[Renderer] Not able to build HTML: cant find root element with id:',
-	_ex_NoNameProperty: '[Renderer] Item has no name property. Item text: "{0}"',
+	_ex_NoNameProperty: '[Renderer] Item has no name property. JSON: \n{0}',
 	_ex_MissingProperty: '[Renderer] Item name "{0}" has no required property "{1}"',
 	designItems: null,
 	isDefined: false,
@@ -30,16 +30,16 @@ var Renderer = {
 	define: function(rootId, items){
 		this.rootId = rootId;
 		this.designItems = items;
-		(!this.designItems) && console.log(this._ex_MissingItems);
+		(!this.designItems) && console.error(this._ex_MissingItems);
 		this.isDefined = (this.rootId) && (this.designItems);
 	},
 	build: function (builder) {
 		if (!builder) 
 			builder = ComponentBuilder();
-		(!this.isDefined) && (console.log(this._ex_DefineUIFirst));
+		(!this.isDefined) && (console.error(this._ex_DefineUIFirst));
 		if (!this.designItems) return;
 		const root = document.querySelector(this.rootId);
-		(!root) && console.log(this._ex_RequiredRoot+` ${this.rootId}`);
+		(!root) && console.error(this._ex_RequiredRoot+` ${this.rootId}`);
 		if (!root) return;
 		const elemnts = this._renderItems(this.designItems,builder);
 		elemnts.forEach(elem => elem && root.appendChild(elem));
@@ -54,9 +54,9 @@ var Renderer = {
 		const hasName = item.hasOwnProperty('name');
 		if (!hasName) {
 			const str = JSON.stringify(item);
-			console.log(this._ex_NoNameProperty.format(str));
+			console.error(this._ex_NoNameProperty.format(str));
 		}
-		(!hasClass) && (console.log(this._ex_MissingProperty.format(item.name,'class')));
+		(!hasClass) && (console.error(this._ex_MissingProperty.format(item.name,'class')));
 		switch(item.class) {
 			case "flexpanel":
 				return builder.buildPanel(item,
