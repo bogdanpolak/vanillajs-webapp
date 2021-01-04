@@ -15,6 +15,7 @@ var Renderer = {
 	_ex_RequiredRoot: '[Renderer] Not able to build HTML: cant find root element with id:',
 	_ex_NoNameProperty: '[Renderer] Item has no name property. JSON: \n{0}',
 	_ex_MissingProperty: '[Renderer] Item name "{0}" has no required property "{1}"',
+	_ex_GridHasInvalidData: '[Renderer] DataGrid name "{0}" has invalid data: Array is expected.',
 	designItems: null,
 	isDefined: false,
 
@@ -65,9 +66,15 @@ var Renderer = {
 						[]
 				);
 			case "datagrid":
-				if (!item.hasOwnProperty('data'))
-					console.error(this._ex_MissingProperty.format(item.name,'data'));
-				return builder.buildDataGrid(item);
+				const hasLoadData = item.hasOwnProperty('listeners') && 
+					item.listeners.hasOwnProperty('loaddata');
+				(!hasLoadData) && (console.error(this._ex_MissingProperty.format(item.name,'listeners.loaddata')));
+				var data = hasLoadData ? item.listeners.loaddata(): [];
+				if (!data instanceof Array) {
+					console.error(this._ex_GridHasInvalidData.format(item.name));
+					return null;
+				}
+				return builder.buildDataGrid(item, data);
 			case "checkgroup":
 				return builder.buildCheckGroup(item);
 			case "doublerange":
@@ -122,12 +129,11 @@ function ComponentBuilder() {
 	const _hasProperty = (obj, prop) => obj && obj.hasOwnProperty(prop);
 
 	return {
-		buildDataGrid: function(item) {
-			if (!item.hasOwnProperty('data')) return;
+		buildDataGrid: function(item, dataRows) {
 			const table = _newelem("table","datagrid-table");
 			buildDataTableHeader(table);
-			buildDataTableBody(table);
-			_updateProperties
+			buildDataTableBody(table, dataRows);
+			_updateProperties(table,item);
 			const grid = _newelem("div","datagrid-div",[
 				_newelem("div","datagrid-title",item.title),
 				table
@@ -143,15 +149,14 @@ function ComponentBuilder() {
 					htmltableHeaderRow.appendChild(th);
 				}
 			}
-			function buildDataTableBody(table){
-				const dataset = item.data;
+			function buildDataTableBody(table, dataRows){
 				const body = table.createTBody();
 				const addGridRow = function(rowidx) {
 					const htmltableRow = body.insertRow(i);
 					const rowObj = {};
 					for (colIdx=0; colIdx<item.columns.length; colIdx++) {
 						prop = item.columns[colIdx].dataField;
-						const value = dataset[rowidx][prop];
+						const value = dataRows[rowidx][prop];
 						rowObj[prop] = value;
 						td = document.createElement('td');
 						td.innerHTML = value;
@@ -161,7 +166,7 @@ function ComponentBuilder() {
 						htmltableRow.onclick = () => item.listeners.select(
 							htmltableRow,rowObj);
 				};
-				for (var i=0;i<dataset.length;i++) {
+				for (var i=0;i<dataRows.length;i++) {
 					addGridRow(i);
 				};
 			}

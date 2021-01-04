@@ -40,8 +40,8 @@ Renderer.defineAndBuild("#root",[
 			{text: 'Phone Number', dataField: 'phone'},
 			{text: 'State', dataField: 'state'}
 		],
-		data: GetTableData(),
 		listeners: {
+			loaddata:  (context) => GetTableData(context),
 			select: function (sender, dataObj) {
 				console.log('HTMLTableRow rowIndex:', sender.rowIndex);
 				console.log(sender);  // tr element
