@@ -11,8 +11,8 @@ Renderer.defineAndBuild("#root",[
 				rangemin: 0,
 				rangemax: 100,
 				step: 5,
-				minvalue: 35,
-				maxvalue: 60,
+				minvalue: 0,
+				maxvalue: 100,
 				listeners: {
 					change: function(value1,value2){
 						console.log(value1,value2);
