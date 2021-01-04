@@ -162,15 +162,23 @@ function ComponentBuilder() {
 			input1.setAttribute("min",item.rangemin);
 			input1.setAttribute("max",item.rangemax);
 			input1.setAttribute("step",item.step);
-			input1.oninput = updateSlider1; 
-			input1.onchange = updateSlider1; 
+			input1.addEventListener('input', updateSlider1, false); 
+			input1.addEventListener('change', updateSlider1, false); 
+			if (_hasProperty(item.listeners,'change')){
+				input1.addEventListener('change', item.listeners.change, false); 
+			}
 
 			const input2 = _ni("range","rangeEnd",item.maxvalue);
 			input2.setAttribute("min",item.rangemin);
 			input2.setAttribute("max",item.rangemax);
 			input2.setAttribute("step",item.step);
-			input2.oninput = updateSlider2;
-			input2.onchange = updateSlider2;
+			input2.addEventListener('input', updateSlider2, false); 
+			input2.addEventListener('change', updateSlider2, false); 
+			if (_hasProperty(item.listeners,'change')){
+				input2.addEventListener('change', 
+					() => item.listeners.change(item.minvalue,item.maxvalue), 
+					false); 
+			}
 
 			const span = _newelem("span","range2-display","");
 			const caption = _newelem("p","",["Range:",span]);

@@ -11,7 +11,12 @@ Renderer.defineAndBuild("#root",[
 				rangemax: 100,
 				step: 5,
 				minvalue: 35,
-				maxvalue: 60	
+				maxvalue: 60,
+				listeners: {
+					change: function(value1,value2){
+						console.log(value1,value2);
+					}
+				}
 			}, {
 				component: 'checkgroup',
 				id: 'chkgroupStates',
