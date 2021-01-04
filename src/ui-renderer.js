@@ -65,6 +65,8 @@ var Renderer = {
 						[]
 				);
 			case "datagrid":
+				if (!item.hasOwnProperty('data'))
+					console.error(this._ex_MissingProperty.format(item.name,'data'));
 				return builder.buildDataGrid(item);
 			case "checkgroup":
 				return builder.buildCheckGroup(item);
@@ -121,6 +123,7 @@ function ComponentBuilder() {
 
 	return {
 		buildDataGrid: function(item) {
+			if (!item.hasOwnProperty('data')) return;
 			const table = _newelem("table","datagrid-table");
 			buildDataTableHeader(table);
 			buildDataTableBody(table);
@@ -141,13 +144,14 @@ function ComponentBuilder() {
 				}
 			}
 			function buildDataTableBody(table){
+				const dataset = item.data;
 				const body = table.createTBody();
 				const addGridRow = function(rowidx) {
 					const htmltableRow = body.insertRow(i);
 					const rowObj = {};
 					for (colIdx=0; colIdx<item.columns.length; colIdx++) {
 						prop = item.columns[colIdx].dataField;
-						const value = item.data[rowidx][prop];
+						const value = dataset[rowidx][prop];
 						rowObj[prop] = value;
 						td = document.createElement('td');
 						td.innerHTML = value;
@@ -157,7 +161,7 @@ function ComponentBuilder() {
 						htmltableRow.onclick = () => item.listeners.select(
 							htmltableRow,rowObj);
 				};
-				for (var i=0;i<item.data.length;i++) {
+				for (var i=0;i<dataset.length;i++) {
 					addGridRow(i);
 				};
 			}
