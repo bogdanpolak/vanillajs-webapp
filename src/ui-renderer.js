@@ -1,8 +1,20 @@
+if (!String.prototype.format) {
+	String.prototype.format = function() {
+		var args = arguments;
+		return this.replace(/{(\d+)}/g, function(match, number) { 
+			return typeof args[number] != 'undefined'
+				? args[number]
+				: match;
+			});
+	};
+}  
+
 var Renderer = {
 	_ex_MissingItems: '[Renderer] Exception. No UI Design Items provided.',
 	_ex_DefineUIFirst: '[Renderer] Define page UI design first',
 	_ex_RequiredRoot: '[Renderer] Not able to build HTML: cant find root element with id:',
-
+	_ex_NoNameProperty: '[Renderer] Item has no name property. Item text: "{0}"',
+	_ex_MissingProperty: '[Renderer] Item name "{0}" has no required property "{1}"',
 	designItems: null,
 	isDefined: false,
 
@@ -30,16 +42,28 @@ var Renderer = {
 		(!root) && console.log(this._ex_RequiredRoot+` ${this.rootId}`);
 		if (!root) return;
 		const elemnts = this._renderItems(this.designItems,builder);
-		elemnts.forEach(elem => root.appendChild(elem));
+		elemnts.forEach(elem => elem && root.appendChild(elem));
 	},
 	_renderItems: function (items,builder) {
-		return items.map(item => Renderer._renderItem(item,builder));
+		const nodes = items.map(item => Renderer._renderItem(item,builder));
+		const hasNull = nodes.some(n => n === null);
+		return hasNull ? [] : nodes;
 	},
 	_renderItem: function(item,builder) {
-		switch(item.component) {
+		const hasClass = item.hasOwnProperty('class');
+		const hasName = item.hasOwnProperty('name');
+		if (!hasName) {
+			const str = JSON.stringify(item);
+			console.log(this._ex_NoNameProperty.format(str));
+		}
+		(!hasClass) && (console.log(this._ex_MissingProperty.format(item.name,'class')));
+		switch(item.class) {
 			case "flexpanel":
-				return item.hasOwnProperty('items') && 
-					builder.buildPanel(item,this._renderItems(item.items,builder));
+				return builder.buildPanel(item,
+					item.hasOwnProperty('items') ?
+						this._renderItems(item.items,builder) :
+						[]
+				);
 			case "datagrid":
 				return builder.buildDataGrid(item);
 			case "checkgroup":
@@ -83,7 +107,7 @@ HtmlBuilder = {
 	},
 	updateNodeProperties: function (htmlelem, item) {
 		if (!item) return;
-		if (item.hasOwnProperty("id")) htmlelem.id = item.id;
+		if (item.hasOwnProperty("name")) htmlelem.id = item.name;
 		if (item.hasOwnProperty('width')) htmlelem.style.width = item.width; 
 		if (item.hasOwnProperty('height')) htmlelem.style.height = item.height;
 	}

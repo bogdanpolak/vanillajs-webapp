@@ -1,10 +1,11 @@
 Renderer.defineAndBuild("#root",[
 	{
-		component: 'flexpanel',
+		class: 'flexpanel',
+		name: 'searchPanel',
 		items: [
 			{
-				component: 'doublerange',
-				id: 'rangeAge',
+				class: 'doublerange',
+				name: 'rangeAge',
 				width: "220px",
 				title: 'Age filter',
 				rangemin: 0,
@@ -18,8 +19,8 @@ Renderer.defineAndBuild("#root",[
 					}
 				}
 			}, {
-				component: 'checkgroup',
-				id: 'chkgroupStates',
+				class: 'checkgroup',
+				name: 'chkgroupStates',
 				width: "220px",
 				height: "83px",
 				title: 'State filter',
@@ -27,7 +28,8 @@ Renderer.defineAndBuild("#root",[
 			}
 		]
 	}, {
-		component: 'datagrid',
+		class: 'datagrid',
+		name: 'gridPersons',
 		title: 'PERSONAL DETAILS',
 		columns: [
 			{text: 'Name', dataField: 'name'},
