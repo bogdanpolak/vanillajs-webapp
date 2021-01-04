@@ -59,13 +59,13 @@ var Renderer = {
 		}
 		(!hasClass) && (console.error(this._ex_MissingProperty.format(item.name,'class')));
 		switch(item.class) {
-			case "flexpanel":
+			case "FlexPanel":
 				return builder.buildPanel(item,
 					item.hasOwnProperty('items') ?
 						this._renderItems(item.items,builder) :
 						[]
 				);
-			case "datagrid":
+			case "DataGrid":
 				const hasLoadData = item.hasOwnProperty('listeners') && 
 					item.listeners.hasOwnProperty('loaddata');
 				(!hasLoadData) && (console.error(this._ex_MissingProperty.format(item.name,'listeners.loaddata')));
@@ -75,9 +75,9 @@ var Renderer = {
 					return null;
 				}
 				return builder.buildDataGrid(item, data);
-			case "checkgroup":
+			case "CheckGroup":
 				return builder.buildCheckGroup(item);
-			case "doublerange":
+			case "DoubleRange":
 				return builder.buildDoubleRange(item);
 			default:
 				return null;
