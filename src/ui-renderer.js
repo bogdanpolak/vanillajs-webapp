@@ -80,12 +80,18 @@ var Renderer = {
 				);
 			case "DataGrid":
 				const hasLoadData = item.hasOwnProperty('listeners') && 
-					item.listeners.hasOwnProperty('loaddata');
-				(!hasLoadData) && (console.error(this._ex_MissingProperty.format(item.name,'listeners.loaddata')));
-				var data = hasLoadData ? item.listeners.loaddata(): [];
-				if (!data instanceof Array) {
-					console.error(this._ex_GridHasInvalidData.format(item.name));
-					return null;
+					(item.listeners.loaddata instanceof Function);
+				if (!hasLoadData) 
+					return console.error(this._ex_MissingProperty.format(item.name,'listeners.loaddata'));
+				var data = item.listeners.loaddata();
+				if (!data instanceof Array) 
+					return console.error(this._ex_GridHasInvalidData.format(item.name));
+				item.refresh = function (context) {
+					const gridNode = document.getElementById(item.name);
+					const parentNode = gridNode.parentElement;
+					parentNode.removeChild(gridNode);
+					var data = item.listeners.loaddata(context);
+					parentNode.appendChild(builder.buildDataTable(item,data))
 				}
 				return builder.buildDataGrid(item, data);
 			case "CheckGroup":
@@ -142,16 +148,12 @@ function ComponentBuilder() {
 	const _hasProperty = (obj, prop) => obj && obj.hasOwnProperty(prop);
 
 	return {
-		buildDataGrid: function(item, dataRows) {
+		buildDataTable: function(item, dataRows) {
 			const table = _newelem("table","datagrid-table");
 			buildDataTableHeader(table);
 			buildDataTableBody(table, dataRows);
 			_updateProperties(table,item);
-			const grid = _newelem("div","datagrid-div",[
-				_newelem("div","datagrid-title",item.title),
-				table
-			]);
-			return grid;
+			return table;
 
 			function buildDataTableHeader(table){
 				var header = table.createTHead();
@@ -183,6 +185,13 @@ function ComponentBuilder() {
 					addGridRow(i);
 				};
 			}
+		},
+
+		buildDataGrid: function(item, dataRows) {
+			return grid = _newelem("div","datagrid-div",[
+				_newelem("div","datagrid-title",item.title),
+				this.buildDataTable(item,dataRows)
+			]);
 		},
 
 		buildCheckGroup: function(item) {

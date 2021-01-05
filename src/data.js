@@ -6,13 +6,16 @@ const Utils =  {
     }
 };
 
-function GetTableData() {
-    const arr = GetPepopleRawArray();
+function GetTableData(context) {
+    let arr = GetPepopleRawArray();
     arr.forEach( o => {
         const birth = new Date(o.birthDate);
         o.birthYear = birth.getFullYear();
         o.age = Utils.calculateAge(birth);
-    });
+	});
+	if (context) {
+		arr = arr.filter( o => (o.age>=context.age.min)&&(o.age<=context.age.max) );
+	}
     arr.sort((a, b) => new Date(a.birthDate)-new Date(b.birthDate));
     return arr;
 }

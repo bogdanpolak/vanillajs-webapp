@@ -15,7 +15,12 @@ const app = Renderer.defineAndBuild("#root",[
 				maxvalue: 100,
 				listeners: {
 					change: function(value1,value2){
-						console.log(value1,value2);
+						app.gridPersons.refresh({
+							age: {
+								min: app.rangeAge.minvalue, 
+								max: app.rangeAge.maxvalue
+							}
+						});
 					}
 				}
 			}, {
