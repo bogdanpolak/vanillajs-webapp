@@ -12,36 +12,56 @@ if (!String.prototype.format) {
 var Renderer = {
 	_ex_MissingItems: '[Renderer] Exception. No UI Design Items provided.',
 	_ex_DefineUIFirst: '[Renderer] Define page UI design first',
-	_ex_RequiredRoot: '[Renderer] Not able to build HTML: cant find root element with id:',
+	_ex_RequiredRoot: '[Renderer] Not able to build HTML: cant find root element with id: {0}',
 	_ex_NoNameProperty: '[Renderer] Item has no name property. JSON: \n{0}',
-	_ex_MissingProperty: '[Renderer] Item name "{0}" has no required property "{1}"',
+	_ex_MissingProperty: '[Renderer] Item "{0}" has no required property "{1}"',
 	_ex_GridHasInvalidData: '[Renderer] DataGrid name "{0}" has invalid data: Array is expected.',
 	designItems: null,
 	isDefined: false,
 
 	defineAndBuild: function(rootId, items){
-		this.define(rootId, items);
+		const app = this.define(rootId, items);
 		if (this.isDefined) {
 			self = this;
 			document.addEventListener("DOMContentLoaded", function(event) {
-				self.build();
+				const builder = ComponentBuilder();
+				self.build(builder);
 			});
 		}
+		return app;
 	},
 	define: function(rootId, items){
+		this.isDefined = false;
 		this.rootId = rootId;
 		this.designItems = items;
-		(!this.designItems) && console.error(this._ex_MissingItems);
-		this.isDefined = (this.rootId) && (this.designItems);
+		if (!this.designItems) 
+			return console.error(this._ex_MissingItems);
+		if (!this.rootId)
+			return console.error(this._ex_ExpectedRootId);
+		const app = {}
+		const self = this;
+		this.isDefined = defineItems(items);
+		return app;
+		
+		function defineItems(items) {
+			const results = items.map( (item) => {
+				if (!item.hasOwnProperty('name')) 
+					return console.error(self._ex_NoNameProperty.format(JSON.stringify(item)));
+				if (!item.hasOwnProperty('class')) 
+					return console.error(self._ex_MissingProperty.format(item.name,'class'));
+				app[item.name] = item;
+				return (item.hasOwnProperty('items')) ? defineItems(item.items) : true;
+			});
+			const hasNotDefinedItem = results.some(r => r !== true);
+			return !hasNotDefinedItem;
+		}
 	},
 	build: function (builder) {
-		if (!builder) 
-			builder = ComponentBuilder();
-		(!this.isDefined) && (console.error(this._ex_DefineUIFirst));
-		if (!this.designItems) return;
+		if (!this.isDefined) 
+			return console.error(this._ex_DefineUIFirst);
 		const root = document.querySelector(this.rootId);
-		(!root) && console.error(this._ex_RequiredRoot+` ${this.rootId}`);
-		if (!root) return;
+		if (!root) 
+			return console.error(this._ex_RequiredRoot.format(this.rootId));
 		const elemnts = this._renderItems(this.designItems,builder);
 		elemnts.forEach(elem => elem && root.appendChild(elem));
 	},
@@ -51,13 +71,6 @@ var Renderer = {
 		return hasNull ? [] : nodes;
 	},
 	_renderItem: function(item,builder) {
-		const hasClass = item.hasOwnProperty('class');
-		const hasName = item.hasOwnProperty('name');
-		if (!hasName) {
-			const str = JSON.stringify(item);
-			console.error(this._ex_NoNameProperty.format(str));
-		}
-		(!hasClass) && (console.error(this._ex_MissingProperty.format(item.name,'class')));
 		switch(item.class) {
 			case "FlexPanel":
 				return builder.buildPanel(item,

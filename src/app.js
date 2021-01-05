@@ -1,4 +1,4 @@
-Renderer.defineAndBuild("#root",[
+const app = Renderer.defineAndBuild("#root",[
 	{
 		class: 'FlexPanel',
 		name: 'searchPanel',
