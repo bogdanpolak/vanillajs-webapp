@@ -195,12 +195,20 @@ function ComponentBuilder() {
 
 		buildCheckGroup: function(item) {
 			if (!_hasProperty(item,'data')) return null;
+			const selected = new Set();
+			item.selected = selected;
 			const checkboxGroup = _newelem("div", "checkbox-group",
 				item.data.map(
-					pair =>  _newelem("label","",[
-						_ni("checkbox",pair.key),
-						pair.value
-					])
+					pair =>  {
+						const checkInput = _ni("checkbox",pair.key);
+						checkInput.addEventListener('click', UpdateCheckboxes, false);
+						if (_hasProperty(item.listeners,'change')){
+							checkInput.addEventListener('click', 
+								() => item.listeners.change(selected), 
+								false); 
+						};			
+						return _newelem("label","",[checkInput,pair.value])
+					}
 				)
 			);
 			_updateProperties(checkboxGroup,item);
@@ -209,6 +217,15 @@ function ComponentBuilder() {
 				[checkboxGroup];
 			div = _newelem("div", "checkbox-group-container", children);
 			return div;
+
+			function UpdateCheckboxes(ev){
+				const cb = ev.currentTarget;
+				if (!cb) return;
+				if(cb.checked) 
+					selected.add(cb.name);
+				else
+					selected.delete(cb.name);
+			}
 		}, 
 
 		buildDoubleRange: function (item) {

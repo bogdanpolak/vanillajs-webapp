@@ -19,7 +19,8 @@ const app = Renderer.defineAndBuild("#root",[
 							age: {
 								min: app.rangeAge.minvalue, 
 								max: app.rangeAge.maxvalue
-							}
+							},
+							states: app.chkgroupStates.selected 
 						});
 					}
 				}
@@ -29,7 +30,18 @@ const app = Renderer.defineAndBuild("#root",[
 				width: "220px",
 				height: "83px",
 				title: 'State filter',
-				data: GetStateDictionary()
+				data: GetStateDictionary(),
+				listeners: {
+					change: function(selected){
+						app.gridPersons.refresh({
+							age: {
+								min: app.rangeAge.minvalue, 
+								max: app.rangeAge.maxvalue
+							},
+							states: app.chkgroupStates.selected 
+						});
+					}
+				}
 			}
 		]
 	}, {
