@@ -79,18 +79,17 @@ var Renderer = {
 						[]
 				);
 			case "DataGrid":
-				const hasLoadData = item.hasOwnProperty('listeners') && 
-					(item.listeners.loaddata instanceof Function);
-				if (!hasLoadData) 
-					return console.error(this._ex_MissingProperty.format(item.name,'listeners.loaddata'));
-				var data = item.listeners.loaddata();
+				const hasLoader = (item.loader instanceof Function);
+				if (!hasLoader) 
+					return console.error(this._ex_MissingProperty.format(item.name,'loader'));
+				var data = item.loader();
 				if (!data instanceof Array) 
 					return console.error(this._ex_GridHasInvalidData.format(item.name));
 				item.refresh = function (context) {
 					const gridNode = document.getElementById(item.name);
 					const parentNode = gridNode.parentElement;
 					parentNode.removeChild(gridNode);
-					var data = item.listeners.loaddata(context);
+					var data = item.loader(context);
 					parentNode.appendChild(builder.buildDataTable(item,data))
 				}
 				return builder.buildDataGrid(item, data);

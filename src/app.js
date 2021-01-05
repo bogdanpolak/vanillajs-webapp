@@ -45,8 +45,8 @@ const app = Renderer.defineAndBuild("#root",[
 			{text: 'Phone Number', dataField: 'phone'},
 			{text: 'State', dataField: 'state'}
 		],
+		loader: (context) => GetTableData(context),
 		listeners: {
-			loaddata:  (context) => GetTableData(context),
 			select: function (sender, dataObj) {
 				console.log('HTMLTableRow rowIndex:', sender.rowIndex);
 				console.log(sender);  // tr element
