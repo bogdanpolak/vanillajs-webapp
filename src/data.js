@@ -14,7 +14,11 @@ function GetTableData(context) {
         o.age = Utils.calculateAge(birth);
 	});
 	if (context) {
-		arr = arr.filter( o => (o.age>=context.age.min)&&(o.age<=context.age.max) );
+		arr = arr.filter( o => 
+			(o.age>=context.age.min) &&
+			(o.age<=context.age.max) &&
+			( context.states.size === 0 || context.states.has(o.state)) 
+		);
 	}
     arr.sort((a, b) => new Date(a.birthDate)-new Date(b.birthDate));
     return arr;
