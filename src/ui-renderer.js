@@ -1,50 +1,101 @@
+if (!String.prototype.format) {
+	String.prototype.format = function() {
+		var args = arguments;
+		return this.replace(/{(\d+)}/g, function(match, number) { 
+			return typeof args[number] != 'undefined'
+				? args[number]
+				: match;
+			});
+	};
+}  
+
 var Renderer = {
 	_ex_MissingItems: '[Renderer] Exception. No UI Design Items provided.',
 	_ex_DefineUIFirst: '[Renderer] Define page UI design first',
-	_ex_RequiredRoot: '[Renderer] Not able to build HTML: cant find root element with id:',
-
+	_ex_RequiredRoot: '[Renderer] Not able to build HTML: cant find root element with id: {0}',
+	_ex_NoNameProperty: '[Renderer] Item has no name property. JSON: \n{0}',
+	_ex_MissingProperty: '[Renderer] Item "{0}" has no required property "{1}"',
+	_ex_GridHasInvalidData: '[Renderer] DataGrid name "{0}" has invalid data: Array is expected.',
 	designItems: null,
 	isDefined: false,
 
 	defineAndBuild: function(rootId, items){
-		this.define(rootId, items);
+		const app = this.define(rootId, items);
 		if (this.isDefined) {
 			self = this;
 			document.addEventListener("DOMContentLoaded", function(event) {
-				self.build();
+				const builder = ComponentBuilder();
+				self.build(builder);
 			});
 		}
+		return app;
 	},
 	define: function(rootId, items){
+		this.isDefined = false;
 		this.rootId = rootId;
 		this.designItems = items;
-		(!this.designItems) && console.log(this._ex_MissingItems);
-		this.isDefined = (this.rootId) && (this.designItems);
+		if (!this.designItems) 
+			return console.error(this._ex_MissingItems);
+		if (!this.rootId)
+			return console.error(this._ex_ExpectedRootId);
+		const app = {}
+		const self = this;
+		this.isDefined = defineItems(items);
+		return app;
+		
+		function defineItems(items) {
+			const results = items.map( (item) => {
+				if (!item.hasOwnProperty('name')) 
+					return console.error(self._ex_NoNameProperty.format(JSON.stringify(item)));
+				if (!item.hasOwnProperty('class')) 
+					return console.error(self._ex_MissingProperty.format(item.name,'class'));
+				app[item.name] = item;
+				return (item.hasOwnProperty('items')) ? defineItems(item.items) : true;
+			});
+			const hasNotDefinedItem = results.some(r => r !== true);
+			return !hasNotDefinedItem;
+		}
 	},
 	build: function (builder) {
-		if (!builder) 
-			builder = ComponentBuilder();
-		(!this.isDefined) && (console.log(this._ex_DefineUIFirst));
-		if (!this.designItems) return;
+		if (!this.isDefined) 
+			return console.error(this._ex_DefineUIFirst);
 		const root = document.querySelector(this.rootId);
-		(!root) && console.log(this._ex_RequiredRoot+` ${this.rootId}`);
-		if (!root) return;
+		if (!root) 
+			return console.error(this._ex_RequiredRoot.format(this.rootId));
 		const elemnts = this._renderItems(this.designItems,builder);
-		elemnts.forEach(elem => root.appendChild(elem));
+		elemnts.forEach(elem => elem && root.appendChild(elem));
 	},
 	_renderItems: function (items,builder) {
-		return items.map(item => Renderer._renderItem(item,builder));
+		const nodes = items.map(item => Renderer._renderItem(item,builder));
+		const hasNull = nodes.some(n => n === null);
+		return hasNull ? [] : nodes;
 	},
 	_renderItem: function(item,builder) {
-		switch(item.component) {
-			case "flexpanel":
-				return item.hasOwnProperty('items') && 
-					builder.buildPanel(item,this._renderItems(item.items,builder));
-			case "datagrid":
-				return builder.buildDataGrid(item);
-			case "checkgroup":
+		switch(item.class) {
+			case "FlexPanel":
+				return builder.buildPanel(item,
+					item.hasOwnProperty('items') ?
+						this._renderItems(item.items,builder) :
+						[]
+				);
+			case "DataGrid":
+				const hasLoader = (item.loader instanceof Function);
+				if (!hasLoader) 
+					return console.error(this._ex_MissingProperty.format(item.name,'loader'));
+				var data = item.loader();
+				if (!data instanceof Array) 
+					return console.error(this._ex_GridHasInvalidData.format(item.name));
+				item.refresh = function (context) {
+					const gridNode = document.getElementById(item.name);
+					const parentNode = gridNode.parentElement;
+					parentNode.removeChild(gridNode);
+					var data = item.loader(context);
+					parentNode.appendChild(builder.buildDataTable(item,data))
+				}
+				return builder.buildDataGrid(item, data);
+			case "CheckGroup":
 				return builder.buildCheckGroup(item);
-			case "doublerange":
+			case "DoubleRange":
 				return builder.buildDoubleRange(item);
 			default:
 				return null;
@@ -83,7 +134,7 @@ HtmlBuilder = {
 	},
 	updateNodeProperties: function (htmlelem, item) {
 		if (!item) return;
-		if (item.hasOwnProperty("id")) htmlelem.id = item.id;
+		if (item.hasOwnProperty("name")) htmlelem.id = item.name;
 		if (item.hasOwnProperty('width')) htmlelem.style.width = item.width; 
 		if (item.hasOwnProperty('height')) htmlelem.style.height = item.height;
 	}
@@ -96,16 +147,12 @@ function ComponentBuilder() {
 	const _hasProperty = (obj, prop) => obj && obj.hasOwnProperty(prop);
 
 	return {
-		buildDataGrid: function(item) {
+		buildDataTable: function(item, dataRows) {
 			const table = _newelem("table","datagrid-table");
 			buildDataTableHeader(table);
-			buildDataTableBody(table);
-			_updateProperties
-			const grid = _newelem("div","datagrid-div",[
-				_newelem("div","datagrid-title",item.title),
-				table
-			]);
-			return grid;
+			buildDataTableBody(table, dataRows);
+			_updateProperties(table,item);
+			return table;
 
 			function buildDataTableHeader(table){
 				var header = table.createTHead();
@@ -116,14 +163,14 @@ function ComponentBuilder() {
 					htmltableHeaderRow.appendChild(th);
 				}
 			}
-			function buildDataTableBody(table){
+			function buildDataTableBody(table, dataRows){
 				const body = table.createTBody();
 				const addGridRow = function(rowidx) {
 					const htmltableRow = body.insertRow(i);
 					const rowObj = {};
 					for (colIdx=0; colIdx<item.columns.length; colIdx++) {
 						prop = item.columns[colIdx].dataField;
-						const value = item.data[rowidx][prop];
+						const value = dataRows[rowidx][prop];
 						rowObj[prop] = value;
 						td = document.createElement('td');
 						td.innerHTML = value;
@@ -133,20 +180,35 @@ function ComponentBuilder() {
 						htmltableRow.onclick = () => item.listeners.select(
 							htmltableRow,rowObj);
 				};
-				for (var i=0;i<item.data.length;i++) {
+				for (var i=0;i<dataRows.length;i++) {
 					addGridRow(i);
 				};
 			}
 		},
 
+		buildDataGrid: function(item, dataRows) {
+			return grid = _newelem("div","datagrid-div",[
+				_newelem("div","datagrid-title",item.title),
+				this.buildDataTable(item,dataRows)
+			]);
+		},
+
 		buildCheckGroup: function(item) {
 			if (!_hasProperty(item,'data')) return null;
+			const selected = new Set();
+			item.selected = selected;
 			const checkboxGroup = _newelem("div", "checkbox-group",
 				item.data.map(
-					pair =>  _newelem("label","",[
-						_ni("checkbox",pair.key),
-						pair.value
-					])
+					pair =>  {
+						const checkInput = _ni("checkbox",pair.key);
+						checkInput.addEventListener('click', UpdateCheckboxes, false);
+						if (_hasProperty(item.listeners,'change')){
+							checkInput.addEventListener('click', 
+								() => item.listeners.change(selected), 
+								false); 
+						};			
+						return _newelem("label","",[checkInput,pair.value])
+					}
 				)
 			);
 			_updateProperties(checkboxGroup,item);
@@ -155,6 +217,15 @@ function ComponentBuilder() {
 				[checkboxGroup];
 			div = _newelem("div", "checkbox-group-container", children);
 			return div;
+
+			function UpdateCheckboxes(ev){
+				const cb = ev.currentTarget;
+				if (!cb) return;
+				if(cb.checked) 
+					selected.add(cb.name);
+				else
+					selected.delete(cb.name);
+			}
 		}, 
 
 		buildDoubleRange: function (item) {
@@ -162,15 +233,23 @@ function ComponentBuilder() {
 			input1.setAttribute("min",item.rangemin);
 			input1.setAttribute("max",item.rangemax);
 			input1.setAttribute("step",item.step);
-			input1.oninput = updateSlider1; 
-			input1.onchange = updateSlider1; 
+			input1.addEventListener('input', updateSlider1, false); 
+			input1.addEventListener('change', updateSlider1, false); 
+			if (_hasProperty(item.listeners,'change')){
+				input1.addEventListener('change', item.listeners.change, false); 
+			}
 
 			const input2 = _ni("range","rangeEnd",item.maxvalue);
 			input2.setAttribute("min",item.rangemin);
 			input2.setAttribute("max",item.rangemax);
 			input2.setAttribute("step",item.step);
-			input2.oninput = updateSlider2;
-			input2.onchange = updateSlider2;
+			input2.addEventListener('input', updateSlider2, false); 
+			input2.addEventListener('change', updateSlider2, false); 
+			if (_hasProperty(item.listeners,'change')){
+				input2.addEventListener('change', 
+					() => item.listeners.change(item.minvalue,item.maxvalue), 
+					false); 
+			}
 
 			const span = _newelem("span","range2-display","");
 			const caption = _newelem("p","",["Range:",span]);

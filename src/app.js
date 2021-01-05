@@ -1,28 +1,52 @@
-Renderer.defineAndBuild("#root",[
+const app = Renderer.defineAndBuild("#root",[
 	{
-		component: 'flexpanel',
+		class: 'FlexPanel',
+		name: 'searchPanel',
 		items: [
 			{
-				component: 'doublerange',
-				id: 'rangeAge',
+				class: 'DoubleRange',
+				name: 'rangeAge',
 				width: "220px",
 				title: 'Age filter',
 				rangemin: 0,
 				rangemax: 100,
 				step: 5,
-				minvalue: 35,
-				maxvalue: 60	
+				minvalue: 0,
+				maxvalue: 100,
+				listeners: {
+					change: function(value1,value2){
+						app.gridPersons.refresh({
+							age: {
+								min: app.rangeAge.minvalue, 
+								max: app.rangeAge.maxvalue
+							},
+							states: app.chkgroupStates.selected 
+						});
+					}
+				}
 			}, {
-				component: 'checkgroup',
-				id: 'chkgroupStates',
+				class: 'CheckGroup',
+				name: 'chkgroupStates',
 				width: "220px",
 				height: "83px",
 				title: 'State filter',
-				data: GetStateDictionary()
+				data: GetStateDictionary(),
+				listeners: {
+					change: function(selected){
+						app.gridPersons.refresh({
+							age: {
+								min: app.rangeAge.minvalue, 
+								max: app.rangeAge.maxvalue
+							},
+							states: app.chkgroupStates.selected 
+						});
+					}
+				}
 			}
 		]
 	}, {
-		component: 'datagrid',
+		class: 'DataGrid',
+		name: 'gridPersons',
 		title: 'PERSONAL DETAILS',
 		columns: [
 			{text: 'Name', dataField: 'name'},
@@ -33,7 +57,7 @@ Renderer.defineAndBuild("#root",[
 			{text: 'Phone Number', dataField: 'phone'},
 			{text: 'State', dataField: 'state'}
 		],
-		data: GetTableData(),
+		loader: (context) => GetTableData(context),
 		listeners: {
 			select: function (sender, dataObj) {
 				console.log('HTMLTableRow rowIndex:', sender.rowIndex);
