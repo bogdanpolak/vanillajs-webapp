@@ -1,5 +1,10 @@
 const app = Renderer.defineAndBuild("#root",[
 	{
+		class: 'Panel',
+		name: 'gridTitlePanel',
+		text: 'PERSONAL DETAILS',
+		cssClass: 'title-div'
+	}, {
 		class: 'FlexPanel',
 		name: 'mainPanel',
 		items: [
@@ -29,10 +34,6 @@ const app = Renderer.defineAndBuild("#root",[
 							}
 						}
 					}, {
-						class: 'Panel',
-						name: 'separator',
-						height: '20px',
-					}, {
 						class: 'CheckGroup',
 						name: 'chkgroupStates',
 						width: "220px",
@@ -54,7 +55,6 @@ const app = Renderer.defineAndBuild("#root",[
 			}, {
 				class: 'DataGrid',
 				name: 'gridPersons',
-				title: 'PERSONAL DETAILS',
 				columns: [
 					{text: 'Name', dataField: 'name'},
 					{text: 'Birth Date', dataField: 'birthDate'},
