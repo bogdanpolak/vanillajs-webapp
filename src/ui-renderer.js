@@ -139,6 +139,13 @@ HtmlBuilder = {
 		if (item.hasOwnProperty("name")) htmlelem.id = item.name;
 		if (item.hasOwnProperty('width')) htmlelem.style.width = item.width; 
 		if (item.hasOwnProperty('height')) htmlelem.style.height = item.height;
+		if (item.hasOwnProperty('cssClass')) htmlelem.classList.add(item.cssClass);
+		if (item.hasOwnProperty('text')) htmlelem.innerHTML = item.text;
+		if (item.hasOwnProperty('marginTop')) htmlelem.style.marginTop = item.marginTop;
+		if (item.hasOwnProperty('marginBottom')) htmlelem.style.marginBottom = item.marginBottom;
+		if (item.hasOwnProperty('marginLeft')) htmlelem.style.marginLeft = item.marginLeft;
+		if (item.hasOwnProperty('marginRight')) htmlelem.style.marginRight = item.marginRight;
+		if (item.hasOwnProperty('margin')) htmlelem.style.margin = item.margin;
 	}
 }
 
