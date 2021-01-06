@@ -73,7 +73,9 @@ var Renderer = {
 	_renderItem: function(item,builder) {
 		switch(item.class) {
 			case "FlexPanel":
-				return builder.buildPanel(item,
+			case "Panel":
+				const cssClass = item.class === "FlexPanel" ? "panel-flex" : "panel";
+				return builder.buildPanel(item,cssClass,
 					item.hasOwnProperty('items') ?
 						this._renderItems(item.items,builder) :
 						[]
@@ -300,8 +302,8 @@ function ComponentBuilder() {
 
 		},
 
-		buildPanel: function (item, htmlElemnts) {
-			const div = _newelem("div", "panel-flex", htmlElemnts);
+		buildPanel: function (item, className, htmlElemnts) {
+			const div = _newelem("div", className, htmlElemnts);
 			_updateProperties(div,item);
 			return div;
 		}
