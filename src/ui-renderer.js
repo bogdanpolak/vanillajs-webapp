@@ -189,10 +189,11 @@ function ComponentBuilder() {
 		},
 
 		buildDataGrid: function(item, dataRows) {
-			return grid = _newelem("div","datagrid-div",[
-				_newelem("div","datagrid-title",item.title),
-				this.buildDataTable(item,dataRows)
-			]);
+			const grid = this.buildDataTable(item,dataRows);
+			const children = (_hasProperty(item,'title')) ? 
+				[_newelem("div","datagrid-title",item.title),grid] :
+				[grid];
+			return _newelem("div","datagrid-div",children);
 		},
 
 		buildCheckGroup: function(item) {
