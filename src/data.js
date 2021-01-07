@@ -292,6 +292,116 @@ function GetPepopleRawArray() {
 		"postalCode": "05665",
 		"phone": "(802) 483-5552",
 		"email": "lindsaywoodard3Gn@teleosaurs.xyz"
+	}, {
+		"name": "Brian S Lange",
+		"birthDate": "1962-10-02",
+		"SSN": "655-16-2482",
+		"address": "4839 Mill Street",
+		"city": "Greenville",
+		"state": "SC",
+		"postalCode": "29609",
+		"phone": "803-389-2509",
+		"email": "justice62@yahoo.com"
+	}, {
+		"name": "Regina J Gutierrez",
+		"birthDate": "1974-07-09",
+		"SSN": "615-57-2387",
+		"address": "2817 Black Oak Hollow Road",
+		"city": "Sunnyvale",
+		"state": "CA",
+		"postalCode": "94086",
+		"phone": "(408) 749-0296",
+		"email": "guti1974@gmail.com"
+	}, {
+		"name": "Clifford S Gluck",
+		"birthDate": "1982-09-20",
+		"SSN": "350-32-6796",
+		"address": "1769 Virginia Street",
+		"city": "Chicago",
+		"state": "IL",
+		"postalCode": "60605",
+		"phone": "773-402-3465",
+		"email": "devyn2000@yahoo.com"
+	}, {
+		"name": "Gregoria Schneid",
+		"birthDate": "1989-01-18",
+		"SSN": "394-32-8494",
+		"address": "1100 Whaley Lane",
+		"city": "Belgium",
+		"state": "WI",
+		"postalCode": "53004",
+		"phone": "414-539-8184",
+		"email": "gregoria_schneid@hotmail.com"
+	}, {
+		"name": "Minnie Dietri",
+		"birthDate": "1956-01-24",
+		"SSN": "332-22-0455",
+		"address": "1790 Walkers Ridge Way",
+		"city": "Chicago",
+		"state": "IL",
+		"postalCode": "60607",
+		"phone": "773-361-8180",
+		"email": "minnie.dietri@yahoo.com"
+	}, {
+		"name": "Ruth Kin",
+		"birthDate": "1990-07-09",
+		"SSN": "449-57-6135",
+		"address": "1894 Florence Street",
+		"city": "Longview",
+		"state": "TX",
+		"postalCode": "75604",
+		"phone": "903-210-0548",
+		"email": "ruth_kin7@hotmail.com"
+	}, {
+		"name": "Darlene M Cress",
+		"birthDate": "1962-01-27",
+		"SSN": "644-86-6342",
+		"address": "3809 Shinn Street",
+		"city": "New York",
+		"state": "NY",
+		"postalCode": "10022",
+		"phone": "917-453-6156",
+		"email": "dmc156@hotmail.com"
+	}, {
+		"name": "Dane R Wright",
+		"birthDate": "1983-01-02",
+		"SSN": "681-10-4111",
+		"address": "2147 Fort Street",
+		"city": "Rocky Mount,",
+		"state": "NC",
+		"postalCode": "27804",
+		"phone": "(252) 937-6086",
+		"email": "damion1983@yahoo.com"
+	}, {
+		"name": "Diego D Waddell",
+		"birthDate": "1956-11-05",
+		"SSN": "644-86-6342",
+		"address": "4807 Crestview Terrace",
+		"city": "Victoria",
+		"state": "TX",
+		"postalCode": "77901",
+		"phone": "(830) 668-7557",
+		"email": "dwaddell@gmail.com"
+	}, {
+		"name": "Dianne D Kyser",
+		"birthDate": "1991-11-29",
+		"SSN": "398-21-6545",
+		"address": "4568 Lynch Street",
+		"city": "Fond Du Lac",
+		"state": "WI",
+		"postalCode": "54935",
+		"phone": "920-579-4868",
+		"email": "dianne1kyser@yahoo.com"
+	}, {
+		"name": "John C Li",
+		"birthDate": "1943-09-29",
+		"SSN": "245-67-3134",
+		"address": "4371 Clarence Court",
+		"city": "Fayetteville",
+		"state": "NC",
+		"postalCode": "28306",
+		"phone": "508-354-3397",
+		"email": "richie_marv@gmail.com"
 	}];
 }
 

@@ -73,7 +73,9 @@ var Renderer = {
 	_renderItem: function(item,builder) {
 		switch(item.class) {
 			case "FlexPanel":
-				return builder.buildPanel(item,
+			case "Panel":
+				const cssClass = item.class === "FlexPanel" ? "panel-flex" : "panel";
+				return builder.buildPanel(item,cssClass,
 					item.hasOwnProperty('items') ?
 						this._renderItems(item.items,builder) :
 						[]
@@ -137,6 +139,13 @@ HtmlBuilder = {
 		if (item.hasOwnProperty("name")) htmlelem.id = item.name;
 		if (item.hasOwnProperty('width')) htmlelem.style.width = item.width; 
 		if (item.hasOwnProperty('height')) htmlelem.style.height = item.height;
+		if (item.hasOwnProperty('cssClass')) htmlelem.classList.add(item.cssClass);
+		if (item.hasOwnProperty('text')) htmlelem.innerHTML = item.text;
+		if (item.hasOwnProperty('marginTop')) htmlelem.style.marginTop = item.marginTop;
+		if (item.hasOwnProperty('marginBottom')) htmlelem.style.marginBottom = item.marginBottom;
+		if (item.hasOwnProperty('marginLeft')) htmlelem.style.marginLeft = item.marginLeft;
+		if (item.hasOwnProperty('marginRight')) htmlelem.style.marginRight = item.marginRight;
+		if (item.hasOwnProperty('margin')) htmlelem.style.margin = item.margin;
 	}
 }
 
@@ -151,7 +160,6 @@ function ComponentBuilder() {
 			const table = _newelem("table","datagrid-table");
 			buildDataTableHeader(table);
 			buildDataTableBody(table, dataRows);
-			_updateProperties(table,item);
 			return table;
 
 			function buildDataTableHeader(table){
@@ -187,10 +195,13 @@ function ComponentBuilder() {
 		},
 
 		buildDataGrid: function(item, dataRows) {
-			return grid = _newelem("div","datagrid-div",[
-				_newelem("div","datagrid-title",item.title),
-				this.buildDataTable(item,dataRows)
-			]);
+			const grid = this.buildDataTable(item,dataRows);
+			const children = (_hasProperty(item,'title')) ? 
+				[_newelem("div","datagrid-title",item.title),grid] :
+				[grid];
+				var mainNode = _newelem("div","datagrid-div",children);
+				_updateProperties(mainNode,item);
+				return mainNode;
 		},
 
 		buildCheckGroup: function(item) {
@@ -211,11 +222,11 @@ function ComponentBuilder() {
 					}
 				)
 			);
-			_updateProperties(checkboxGroup,item);
 			const children = (_hasProperty(item,"title")) ? 
 				[_newelem("h1","title",item.title), checkboxGroup] :
 				[checkboxGroup];
 			div = _newelem("div", "checkbox-group-container", children);
+			_updateProperties(div,item);
 			return div;
 
 			function UpdateCheckboxes(ev){
@@ -256,11 +267,11 @@ function ComponentBuilder() {
 			updateRangeCaption(item.minvalue,item.maxvalue);
 
 			const div1 = _newelem("div","double-range",[input1,input2,caption]);
-			_updateProperties(div1,item);
 
 			const children = _hasProperty(item,"title") ?
 				[_newelem("h1","title",item.title),div1] : div1;
 			const div2 = _newelem("div", "double-range-container", children);
+			_updateProperties(div2,item);
 			return div2;
 
 			function updateSlider1 (){
@@ -300,8 +311,8 @@ function ComponentBuilder() {
 
 		},
 
-		buildPanel: function (item, htmlElemnts) {
-			const div = _newelem("div", "panel-flex", htmlElemnts);
+		buildPanel: function (item, className, htmlElemnts) {
+			const div = _newelem("div", className, htmlElemnts);
 			_updateProperties(div,item);
 			return div;
 		}
