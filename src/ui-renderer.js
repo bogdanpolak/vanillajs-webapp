@@ -160,7 +160,6 @@ function ComponentBuilder() {
 			const table = _newelem("table","datagrid-table");
 			buildDataTableHeader(table);
 			buildDataTableBody(table, dataRows);
-			_updateProperties(table,item);
 			return table;
 
 			function buildDataTableHeader(table){
@@ -200,7 +199,9 @@ function ComponentBuilder() {
 			const children = (_hasProperty(item,'title')) ? 
 				[_newelem("div","datagrid-title",item.title),grid] :
 				[grid];
-			return _newelem("div","datagrid-div",children);
+				var mainNode = _newelem("div","datagrid-div",children);
+				_updateProperties(mainNode,item);
+				return mainNode;
 		},
 
 		buildCheckGroup: function(item) {
@@ -221,11 +222,11 @@ function ComponentBuilder() {
 					}
 				)
 			);
-			_updateProperties(checkboxGroup,item);
 			const children = (_hasProperty(item,"title")) ? 
 				[_newelem("h1","title",item.title), checkboxGroup] :
 				[checkboxGroup];
 			div = _newelem("div", "checkbox-group-container", children);
+			_updateProperties(div,item);
 			return div;
 
 			function UpdateCheckboxes(ev){
@@ -266,11 +267,11 @@ function ComponentBuilder() {
 			updateRangeCaption(item.minvalue,item.maxvalue);
 
 			const div1 = _newelem("div","double-range",[input1,input2,caption]);
-			_updateProperties(div1,item);
 
 			const children = _hasProperty(item,"title") ?
 				[_newelem("h1","title",item.title),div1] : div1;
 			const div2 = _newelem("div", "double-range-container", children);
+			_updateProperties(div2,item);
 			return div2;
 
 			function updateSlider1 (){
