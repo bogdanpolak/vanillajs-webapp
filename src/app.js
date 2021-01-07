@@ -3,7 +3,8 @@ const app = Renderer.defineAndBuild("#root",[
 		class: 'Panel',
 		name: 'gridTitlePanel',
 		text: 'PERSONAL DETAILS',
-		cssClass: 'title-div'
+		cssClass: 'title-div',
+		marginBottom: '3px',
 	}, {
 		class: 'FlexPanel',
 		name: 'mainPanel',
@@ -11,12 +12,14 @@ const app = Renderer.defineAndBuild("#root",[
 			{
 				class: 'Panel',
 				name: 'searchPanel',
+				marginRight: '10px',
 				items: [
 					{		
 						class: 'DoubleRange',
 						name: 'rangeAge',
 						width: "220px",
 						title: 'Age filter',
+						marginBottom: '15px',
 						rangemin: 0,
 						rangemax: 100,
 						step: 5,

@@ -24,7 +24,6 @@ body {
 
 .panel-flex {
 	display: flex;
-	margin: 10px 0;
 }
 
 /* ------------------------------------------------------------ */
@@ -43,7 +42,6 @@ body {
 	padding: 10px;
 }
 .datagrid-div table {
-	margin: 1px 0;
 	border-collapse: collapse;
 	font-weight: 100;
 	font-size: 14px;
@@ -64,9 +62,6 @@ body {
 /* Checkbox Group component */
 /* ------------------------------------------------------------ */
 
-.checkbox-group-container {
-	margin-right: 10px;
-}
 .checkbox-group-container h1 {
 	font-weight: normal;
 	font-size: 14px;
@@ -95,9 +90,6 @@ body {
 /* Double Range component */
 /* ------------------------------------------------------------ */
 
-.double-range-container {
-	margin-right: 10px;
-}
 .double-range-container h1 {
 	font-size: 14px;
 	font-weight: normal;
