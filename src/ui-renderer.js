@@ -86,11 +86,11 @@ var Renderer = {
 				if (!data instanceof Array) 
 					return console.error(this._ex_GridHasInvalidData.format(item.name));
 				item.refresh = function (context) {
-					const gridNode = document.getElementById(item.name);
-					const parentNode = gridNode.parentElement;
-					parentNode.removeChild(gridNode);
+					const gridDivNode = document.getElementById(item.name);
+					const tableNode = gridNode.children[0];
+					gridDivNode.removeChild(tableNode);
 					var data = item.loader(context);
-					parentNode.appendChild(builder.buildDataTable(item,data))
+					gridDivNode.appendChild(builder.buildDataTable(item,data))
 				}
 				return builder.buildDataGrid(item, data);
 			case "CheckGroup":
