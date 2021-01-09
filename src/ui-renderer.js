@@ -22,11 +22,9 @@ var Renderer = {
 	defineAndBuild: function(rootId, items){
 		const app = this.define(rootId, items);
 		if (this.isDefined) {
-			self = this;
-			document.addEventListener("DOMContentLoaded", function(event) {
-				const builder = ComponentBuilder();
-				self.build(builder);
-			});
+			document.addEventListener("DOMContentLoaded", function() {
+				this.build(ComponentBuilder());
+			}.bind(this));
 		}
 		return app;
 	},
