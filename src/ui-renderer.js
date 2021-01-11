@@ -1,14 +1,3 @@
-if (!String.prototype.format) {
-	String.prototype.format = function() {
-		var args = arguments;
-		return this.replace(/{(\d+)}/g, function(match, number) { 
-			return typeof args[number] != 'undefined'
-				? args[number]
-				: match;
-			});
-	};
-}  
-
 var Renderer = {
 	_ex_MissingItems: '[Renderer] Exception. No UI Design Items provided.',
 	_ex_DefineUIFirst: '[Renderer] Define page UI design first',
@@ -22,11 +11,9 @@ var Renderer = {
 	defineAndBuild: function(rootId, items){
 		const app = this.define(rootId, items);
 		if (this.isDefined) {
-			self = this;
-			document.addEventListener("DOMContentLoaded", function(event) {
-				const builder = ComponentBuilder();
-				self.build(builder);
-			});
+			document.addEventListener("DOMContentLoaded", function() {
+				this.build(ComponentBuilder());
+			}.bind(this));
 		}
 		return app;
 	},
@@ -88,11 +75,11 @@ var Renderer = {
 				if (!data instanceof Array) 
 					return console.error(this._ex_GridHasInvalidData.format(item.name));
 				item.refresh = function (context) {
-					const gridNode = document.getElementById(item.name);
-					const parentNode = gridNode.parentElement;
-					parentNode.removeChild(gridNode);
+					const gridDivNode = document.getElementById(item.name);
+					const tableNode = gridDivNode.children[0];
+					gridDivNode.removeChild(tableNode);
 					var data = item.loader(context);
-					parentNode.appendChild(builder.buildDataTable(item,data))
+					gridDivNode.appendChild(builder.buildDataTable(item,data))
 				}
 				return builder.buildDataGrid(item, data);
 			case "CheckGroup":
