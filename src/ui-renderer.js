@@ -76,7 +76,7 @@ var Renderer = {
 					return console.error(this._ex_GridHasInvalidData.format(item.name));
 				item.refresh = function (context) {
 					const gridDivNode = document.getElementById(item.name);
-					const tableNode = gridNode.children[0];
+					const tableNode = gridDivNode.children[0];
 					gridDivNode.removeChild(tableNode);
 					var data = item.loader(context);
 					gridDivNode.appendChild(builder.buildDataTable(item,data))
