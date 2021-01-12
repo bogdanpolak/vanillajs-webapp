@@ -1,4 +1,4 @@
-const app = Renderer.defineAndBuild("#root",[
+const app = Cheesecake.defineAndBuild("#root",[
 	{
 		class: 'Panel',
 		name: 'gridTitlePanel',

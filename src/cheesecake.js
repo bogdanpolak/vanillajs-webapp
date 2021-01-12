@@ -1,4 +1,4 @@
-var Renderer = {
+var Cheesecake = {
 	_ex_MissingItems: '[Renderer] Exception. No UI Design Items provided.',
 	_ex_DefineUIFirst: '[Renderer] Define page UI design first',
 	_ex_RequiredRoot: '[Renderer] Not able to build HTML: cant find root element with id: {0}',
