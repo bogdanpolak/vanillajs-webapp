@@ -53,7 +53,7 @@ var Cheesecake = {
 		elemnts.forEach(elem => elem && root.appendChild(elem));
 	},
 	_renderItems: function (items,builder) {
-		const nodes = items.map(item => Renderer._renderItem(item,builder));
+		const nodes = items.map(item => this._renderItem(item,builder));
 		const hasNull = nodes.some(n => n === null);
 		return hasNull ? [] : nodes;
 	},
