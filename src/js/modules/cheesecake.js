@@ -1,4 +1,4 @@
-var Renderer = {
+var Cheesecake = {
 	_ex_MissingItems: '[Renderer] Exception. No UI Design Items provided.',
 	_ex_DefineUIFirst: '[Renderer] Define page UI design first',
 	_ex_RequiredRoot: '[Renderer] Not able to build HTML: cant find root element with id: {0}',
@@ -53,7 +53,7 @@ var Renderer = {
 		elemnts.forEach(elem => elem && root.appendChild(elem));
 	},
 	_renderItems: function (items,builder) {
-		const nodes = items.map(item => Renderer._renderItem(item,builder));
+		const nodes = items.map(item => this._renderItem(item,builder));
 		const hasNull = nodes.some(n => n === null);
 		return hasNull ? [] : nodes;
 	},
